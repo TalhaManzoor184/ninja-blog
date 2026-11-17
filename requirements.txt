@@ -2,3 +2,4 @@ google-genai>=2.25.0,<3  # 3.x routes Interactions to /v1 and returns 404 (same 
 pydantic>=2.7
 pyyaml>=6.0
 requests>=2.32
+pillow>=10.3

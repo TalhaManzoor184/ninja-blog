@@ -160,6 +160,7 @@ def env(tmp_path, monkeypatch):
         return fake_article()
 
     monkeypatch.setattr(gemini, "structured", fake_structured)
+    monkeypatch.setattr(writer, "research", lambda title, original: fake_structured("", Research))
     monkeypatch.setattr(gemini, "image", lambda prompt, aspect_ratio="16:9": b"\xff\xd8fakejpeg")
     yield calls
     srv.shutdown()
@@ -212,3 +213,13 @@ def test_bad_password_gives_clear_error(env, monkeypatch):
     monkeypatch.setenv("WP_APP_PASSWORD", "wrong")
     with pytest.raises(Exception, match="401.*WP_APP_PASSWORD"):
         main.main(["check"])
+
+
+def test_featured_falls_back_to_title_card_without_image_quota(env, monkeypatch):
+    def no_quota(prompt, aspect_ratio="16:9"):
+        raise gemini.QuotaError("limit: 0 requests per day on Free Tier")
+    monkeypatch.setattr(gemini, "image", no_quota)
+    assert main.main(["run"]) == 0
+    _, data = FakeWP.updates[-1]
+    assert data["featured_media"] and len(FakeWP.media) == 1  # title card only, no inline AI image
+    assert FakeWP.media[0]["bytes"] > 10000

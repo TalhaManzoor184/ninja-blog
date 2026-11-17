@@ -34,7 +34,7 @@ def _system() -> str:
 
 def research(title: str, original: str) -> Research | None:
     """Check the topic against current Microsoft docs (Google Search grounding). Optional."""
-    if not cfg()["run"].get("use_search"):
+    if not cfg()["run"].get("use_search") or not gemini.search_available():
         return None
     prompt = (
         f"Blog post title: {title}\n\nOriginal post (may be outdated):\n{original[:12000]}\n\n"
@@ -43,7 +43,10 @@ def research(title: str, original: str) -> Research | None:
         "Only include facts you could verify."
     )
     try:
-        return gemini.structured(prompt, Research, system=_system(), search=True, thinking="low")
+        it = gemini._call(model=cfg()["models"]["text"], input=prompt + "\n\nReturn ONLY a JSON object matching this JSON Schema:\n"
+                          + json.dumps(Research.model_json_schema()), tools=[{"type": "google_search"}],
+                          system_instruction=_system(), **gemini._thinking("low"))
+        return Research.model_validate_json(gemini._extract_json(gemini._output_text(it)))
     except Exception as e:  # research is a bonus; writing continues without it
         log.warning("Research step skipped: %s", e)
         return None

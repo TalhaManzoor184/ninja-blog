@@ -111,7 +111,7 @@ def _call(**body):
             else:
                 overloaded = "high demand" in msg or "503" in msg or "overloaded" in msg or "unavailable" in msg
                 fallback = cfg()["models"].get("text_fallback")
-                if overloaded and attempt >= 2 and model == cfg()["models"]["text"] and fallback and not body.get("tools"):
+                if overloaded and attempt >= 1 and model == cfg()["models"]["text"] and fallback and not body.get("tools"):
                     log.warning("%s overloaded — switching to fallback text model %s", model, fallback)
                     body["model"] = fallback
                     _text_fallback_active = True

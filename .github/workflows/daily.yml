@@ -31,7 +31,7 @@ permissions:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
         with:
@@ -77,6 +77,18 @@ jobs:
           path: output/
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Publish preview to the "preview" branch (dry runs)
+        if: inputs.dry_run == true
+        run: |
+          [ -d output ] || exit 0
+          cd output
+          git init -q -b preview
+          git config user.name "ninja-blog-agent"
+          git config user.email "actions@users.noreply.github.com"
+          { echo "# Dry-run preview $(date -u +%F)"; echo; for d in */; do echo "- [${d%/}](${d}preview.html) — open content.html / article.json / images in the folder"; done; } > README.md
+          git add -A && git commit -q -m "Dry-run preview $(date -u +%F)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" preview
 
       - name: Save progress
         if: always() && inputs.dry_run != true

@@ -17,7 +17,7 @@ import re
 import sys
 from pathlib import Path
 
-from . import images, quality, writer
+from . import cards, images, quality, writer
 from .config import BACKUP_DIR, OUTPUT_DIR, PRIORITY_FILE, REPORT_FILE, STATE_FILE, cfg
 from .dedupe import groups, pick_keeper
 from .render import Media, render
@@ -154,9 +154,10 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
     featured_id = None
     if cfg()["article"].get("featured_image"):
         data = images.ai_image(article.featured_image_prompt)
-        if data:
-            featured_id = upload(data, f"{slug}-featured.jpg", article.featured_image_alt).id
-            n_img += 1
+        if not data:  # no image quota (e.g. free tier): branded title card instead
+            data = cards.title_card(article.h1, article.category, cfg()["site"]["name"])
+        featured_id = upload(data, f"{slug}-featured.jpg", article.featured_image_alt).id
+        n_img += 1
 
     cat = next((c["id"] for c in categories if c["name"] == article.category), None)
     publish = cfg()["run"]["publish"]
