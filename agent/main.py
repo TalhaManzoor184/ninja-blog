@@ -45,7 +45,7 @@ def save_state(state: dict) -> None:
 
 def mark(state: dict, post: dict, status: str, **extra) -> None:
     rec = state["posts"].setdefault(str(post["id"]), {})
-    rec.update({"status": status, "slug": post.get("slug"), "title": post["title"]["raw"],
+    rec.update({"status": status, "slug": post.get("slug"), "title": post["title"]["raw"], "old_title": post["title"]["raw"],
                 "at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC"), **extra})
 
 
@@ -196,7 +196,7 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
         log.warning("Category %r not found; keeping the post's current categories", article.category)
     data["tags"] = wp.tag_ids(article.tags)
     saved = wp.update_post(post["id"], data)
-    mark(state, post, DONE if publish else REVIEW, link=saved.get("link"), words=n_words, images=n_img,
+    mark(state, post, DONE if publish else REVIEW, title=article.h1, link=saved.get("link"), words=n_words, images=n_img,
          seo_title=article.seo_title, notes=article.quality_notes if publish else "Rewritten; left as draft (publish: false)")
     log.info("%s: %s", "Published" if publish else "Saved as draft", saved.get("link"))
     return DONE if publish else REVIEW

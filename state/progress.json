@@ -5,10 +5,11 @@
    "images": 2,
    "link": "https://thepowerappsninja.com/2024/02/29/creating-a-system-dashboard-in-dynamics-365/",
    "notes": "Rewrote the brief, screenshot-dependent draft into an end-to-end technical tutorial. Retained the original scenario (2-column dashboard with Account list view, publishing requirement, and security roles). Added exact maker portal navigation steps, root cause analysis for the 'no components' error, the modern App Designer step, a comparison table, and an architectural Mermaid diagram.",
+   "old_title": "CREATING A SYSTEM DASHBOARD IN DYNAMICS 365",
    "seo_title": "Create a System Dashboard in Dynamics 365: Full Guide",
    "slug": "creating-a-system-dashboard-in-dynamics-365",
    "status": "published",
-   "title": "CREATING A SYSTEM DASHBOARD IN DYNAMICS 365",
+   "title": "How to Create and Publish a System Dashboard in Dynamics 365",
    "words": 1245
   }
  }
