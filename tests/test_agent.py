@@ -223,3 +223,18 @@ def test_featured_falls_back_to_title_card_without_image_quota(env, monkeypatch)
     _, data = FakeWP.updates[-1]
     assert data["featured_media"] and len(FakeWP.media) == 1  # title card only, no inline AI image
     assert FakeWP.media[0]["bytes"] > 10000
+
+
+def test_duplicate_rules():
+    from agent.dedupe import similarity
+    from agent.text import shingles
+
+    def P(t, body, slug=""):
+        return {"title": {"raw": t}, "_sh": shingles(body), "slug": slug}
+    a = " ".join(f"word{i}" for i in range(200))
+    b = " ".join(f"other{i}" for i in range(200))
+    assert similarity(P("How to use Autonumber field in Model Driven Apps", a), P("How to use Autonumber field in Model Driven Apps", b)) == 1.0
+    assert similarity(P("Status reason", a, "status-reason"), P("Other", b, "status-reason-2")) == 1.0
+    assert similarity(P("Open as Dialog using NavigateTo", a), P("Add on Form as control", b)) == 0.0
+    assert similarity(P("Next stage in BPF", a), P("Next stage in BPF (continued)", b)) == 0.0
+    assert similarity(P("Totally different", a), P("Another title", a)) == 1.0  # same text, new title

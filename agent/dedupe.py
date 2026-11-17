@@ -1,18 +1,28 @@
 """Finds posts that cover the same topic (duplicates) and picks the one to keep."""
 from __future__ import annotations
 
+import re
+
 from .text import html_to_text, jaccard, shingles, tokens, words
 
 
+PART = re.compile(r"\b(continued|part\s*(\d+|i+|two|three))\b", re.I)
+
+
 def similarity(a: dict, b: dict) -> float:
-    ta, tb = tokens(a["title"]["raw"]), tokens(b["title"]["raw"])
-    title = jaccard(ta, tb)
-    body = jaccard(a["_sh"], b["_sh"])
-    # Same slug apart from a -2/-3 suffix is a duplicate for sure.
+    """Duplicate = same topic. Same title (or slug with a -2 suffix) is enough; a similar title needs mostly the same
+    text too; a different title counts only when the text is nearly identical. Part 2 / "continued" posts are kept apart."""
     sa, sb = a.get("slug", ""), b.get("slug", "")
-    if sa and sb and (sa.rstrip("-0123456789") == sb.rstrip("-0123456789")):
+    if sa and sb and sa.rstrip("-0123456789") == sb.rstrip("-0123456789"):
         return 1.0
-    return max(body, title if body > 0.2 or title >= 0.8 else title * 0.8)
+    ra, rb = a["title"]["raw"], b["title"]["raw"]
+    title = jaccard(tokens(ra), tokens(rb))
+    body = jaccard(a["_sh"], b["_sh"])
+    if bool(PART.search(ra)) != bool(PART.search(rb)):
+        return body if body >= 0.9 else 0.0
+    if title >= 0.95:
+        return 1.0
+    return body if body >= 0.85 else 0.0  # a different or partly similar title: only near-identical text
 
 
 def groups(posts: list[dict], threshold: float) -> list[list[dict]]:

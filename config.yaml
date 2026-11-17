@@ -45,5 +45,5 @@ article:
   diagrams: 1               # step/flow diagrams drawn from Mermaid (needs mermaid-cli; skipped if missing)
 
 duplicates:
-  similarity: 0.6           # 0-1; titles/contents above this are treated as the same topic
+  similarity: 0.85          # 0-1; same title, or text this similar, counts as the same topic
   action: "skip"            # skip = leave the copy as a draft and list it in the report; trash = move it to WordPress trash

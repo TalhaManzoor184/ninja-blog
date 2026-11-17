@@ -1,45 +1,5 @@
 {
  "posts": {
-  "1047": {
-   "at": "2026-11-17 21:58 UTC",
-   "kept": 1045,
-   "notes": "Same topic as #1045 (skip)",
-   "slug": "html-web-resource-open-as-dialog-using-navigateto-and-pass-data-from-form-to-html-and-back-to-form",
-   "status": "duplicate",
-   "title": "HTML Web Resource – Open as Dialog using NavigateTo and pass data from Form to HTML and back to Form"
-  },
-  "1068": {
-   "at": "2026-11-17 21:58 UTC",
-   "kept": 1069,
-   "notes": "Same topic as #1069 (skip)",
-   "slug": "open-an-entity-view-in-javascript-power-apps-model-driven-app-2",
-   "status": "duplicate",
-   "title": "OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP"
-  },
-  "288": {
-   "at": "2026-11-17 21:58 UTC",
-   "kept": 274,
-   "notes": "Same topic as #274 (skip)",
-   "slug": "how-to-use-autonumber-field-in-model-driven-apps-2",
-   "status": "duplicate",
-   "title": "How to use Autonumber field in Model Driven Apps"
-  },
-  "605": {
-   "at": "2026-11-17 21:58 UTC",
-   "kept": 592,
-   "notes": "Same topic as #592 (skip)",
-   "slug": "using-javascript-to-go-to-next-stage-in-business-process-flows",
-   "status": "duplicate",
-   "title": "USING JAVASCRIPT TO GO TO NEXT STAGE IN BUSINESS PROCESS FLOWS"
-  },
-  "690": {
-   "at": "2026-11-17 21:58 UTC",
-   "kept": 295,
-   "notes": "Same topic as #295 (skip)",
-   "slug": "how-to-set-a-lookup-field-to-another-lookup-field-on-a-dynamics-365-power-apps-form-using-javascript-2",
-   "status": "duplicate",
-   "title": "HOW TO SET A LOOKUP FIELD TO ANOTHER LOOKUP FIELD ON A DYNAMICS 365 POWER APPS FORM USING JAVASCRIPT"
-  },
   "700": {
    "at": "2026-11-17 22:07 UTC",
    "images": 2,
@@ -50,14 +10,6 @@
    "status": "published",
    "title": "CREATING A SYSTEM DASHBOARD IN DYNAMICS 365",
    "words": 1245
-  },
-  "967": {
-   "at": "2026-11-17 21:58 UTC",
-   "kept": 969,
-   "notes": "Same topic as #969 (skip)",
-   "slug": "dataverse-how-the-relatedentities-plugin-works-2",
-   "status": "duplicate",
-   "title": "DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS"
   }
  }
 }
