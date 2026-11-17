@@ -1,0 +1,49 @@
+# PowerApps Ninja blog agent — settings.
+# Secrets (WordPress password, Gemini key) never go here; they come from GitHub Actions secrets.
+
+site:
+  name: "PowerApps Ninja"
+  url: "https://thepowerappsninja.com"   # override with the WP_URL secret
+  audience: "Power Apps, Power Automate, Dataverse and Dynamics 365 makers and developers"
+  # Free tools on the site the writer may link to when they genuinely help the reader.
+  tools:
+    - { name: "JSON Formatter", path: "/json-formatter/" }
+    - { name: "JSON Validator", path: "/json-validator/" }
+    - { name: "Power Fx Cheat Sheet", path: "/power-fx-cheat-sheet/" }
+    - { name: "Power Fx Formula Checker", path: "/power-fx-formula-checker/" }
+    - { name: "SVG to Power Fx", path: "/svg-to-power-fx/" }
+    - { name: "Base64 Decoder", path: "/base64-decoder/" }
+    - { name: "Base64 Encoder", path: "/base64-encoder/" }
+    - { name: "JWT Decoder", path: "/jwt-decoder/" }
+    - { name: "UUID / GUID Generator", path: "/uuid-generator/" }
+    - { name: "Hex Converter", path: "/hex-converter/" }
+    - { name: "HEX to RGB Converter", path: "/hex-to-rgb/" }
+    - { name: "Color Picker", path: "/color-picker/" }
+    - { name: "Regex Tester", path: "/regex-tester/" }
+    - { name: "Unix Timestamp Converter", path: "/unix-timestamp-converter/" }
+    - { name: "URL Encoder", path: "/url-encoder/" }
+
+models:
+  # Override with env vars GEMINI_TEXT_MODEL / GEMINI_IMAGE_MODEL
+  text: "gemini-3.8-flash"
+  text_fallback: "gemini-3.5-flash-lite"
+  thinking_level: "medium"
+  image: "gemini-nano-banana-2.1"
+
+run:
+  posts_per_day: 1          # override with the POSTS_PER_DAY repo variable
+  max_attempts_per_run: 3   # if a post fails the quality check, try the next one (up to this many)
+  publish: true             # false = rewrite and save, but leave the post as a draft for you to publish
+  use_search: true          # check facts against current Microsoft docs with Google Search grounding
+
+article:
+  min_words: 900
+  max_words: 2200
+  min_sections: 3
+  featured_image: true      # one AI illustration as the featured image (no text, no logos)
+  inline_ai_images: 1       # extra AI illustrations inside the article
+  diagrams: 1               # step/flow diagrams drawn from Mermaid (needs mermaid-cli; skipped if missing)
+
+duplicates:
+  similarity: 0.6           # 0-1; titles/contents above this are treated as the same topic
+  action: "skip"            # skip = leave the copy as a draft and list it in the report; trash = move it to WordPress trash

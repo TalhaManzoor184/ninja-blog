@@ -1,0 +1,246 @@
+"""Thin wrapper over the Gemini Interactions API (google-genai >= 2.25).
+
+Adapted from the unknown-atlas pipeline so both projects behave the same.
+
+Everything that talks to Gemini goes through here so model names, retries and
+response parsing live in one place.
+"""
+from __future__ import annotations
+
+import base64
+import json
+import logging
+import re
+import time
+from typing import Any, Type, TypeVar
+
+from pydantic import BaseModel, ValidationError
+
+from .config import cfg, env
+
+log = logging.getLogger(__name__)
+T = TypeVar("T", bound=BaseModel)
+
+_client = None
+
+
+def client():
+    global _client
+    if _client is None:
+        from google import genai
+        from google.genai import types
+
+        # The SDK retries 429/5xx itself and honours Retry-After (which can be hours on a daily quota) —
+        # that silently hung runs. Disable it; _call() does its own retries with logging. Hard 10-min timeout.
+        _client = genai.Client(
+            api_key=env("GEMINI_API_KEY"),
+            http_options=types.HttpOptions(
+                timeout=600_000,
+                retry_options=types.HttpRetryOptions(attempts=1, http_status_codes=[599]),
+            ),
+        )
+    return _client
+
+
+def _get(obj: Any, name: str, default=None):
+    if obj is None:
+        return default
+    if isinstance(obj, dict):
+        return obj.get(name, default)
+    return getattr(obj, name, default)
+
+
+class QuotaError(RuntimeError):
+    """Quota / free-tier limit that won't clear during this run."""
+
+
+_text_fallback_active = False  # once the main text model is out of quota, stay on the fallback for this run
+_search_blocked = False   # set once Google Search grounding hits a quota; later calls skip straight to fallbacks
+
+
+def search_available() -> bool:
+    return not _search_blocked
+
+
+def _call(**body):
+    """Call interactions.create with retries on transient errors.
+
+    Quota errors:
+      * calls with google_search -> one short retry, then QuotaError (callers fall back to non-search paths)
+      * plain text calls          -> switch to models.text_fallback (e.g. a Flash-Lite model with a bigger free quota)
+    """
+    global _search_blocked, _text_fallback_active
+    if _text_fallback_active and body.get("model") == cfg()["models"]["text"] and cfg()["models"].get("text_fallback"):
+        body["model"] = cfg()["models"]["text_fallback"]
+    delay = 8.0
+    quota_hits = 0
+    switched = False
+    for attempt in range(8):
+        try:
+            return client().interactions.create(**body)
+        except Exception as e:  # SDK raises various error types; inspect message
+            msg = str(e).lower()
+            model = body.get("model")
+            tool = " + google_search" if body.get("tools") else ""
+            quota = "quota" in msg or "too_many_requests" in msg or "resource_exhausted" in msg
+            transient = quota or any(k in msg for k in ("429", "rate", "500", "502", "503", "504", "unavailable", "deadline", "timeout", "timed out",
+                                             "overloaded", "disconnect", "connection", "reset by peer", "eof", "remoteprotocol"))
+            if not transient and "thinking" in msg and body.get("generation_config", {}).get("thinking_level"):
+                log.warning("%s rejected thinking_level — retrying without it", model)
+                body["generation_config"] = {k: v for k, v in body["generation_config"].items() if k != "thinking_level"}
+                continue
+            if not transient or attempt == 7:
+                raise RuntimeError(f"Gemini call failed [model={model}{tool}]: {e}") from e
+            if quota:
+                quota_hits += 1
+                fallback = cfg()["models"].get("text_fallback")
+                if body.get("tools"):
+                    if quota_hits >= 2:
+                        _search_blocked = True
+                        raise QuotaError(f"Google Search grounding quota [model={model}]: {e}") from e
+                elif model == cfg()["models"]["text"] and fallback and not switched:
+                    log.warning("Quota hit on %s — switching to fallback text model %s", model, fallback)
+                    body["model"] = fallback
+                    switched = True
+                    _text_fallback_active = True
+                    continue
+                elif model == cfg()["models"]["image"] or quota_hits >= 3:
+                    # image quota: let the caller decide (the article goes out with fewer images)
+                    raise QuotaError(f"Gemini quota [model={model}]: {e}") from e
+                wait = 30.0 * quota_hits
+            else:
+                overloaded = "high demand" in msg or "503" in msg or "overloaded" in msg or "unavailable" in msg
+                fallback = cfg()["models"].get("text_fallback")
+                if overloaded and attempt >= 2 and model == cfg()["models"]["text"] and fallback and not body.get("tools"):
+                    log.warning("%s overloaded — switching to fallback text model %s", model, fallback)
+                    body["model"] = fallback
+                    _text_fallback_active = True
+                    continue
+                wait = delay
+                delay = min(delay * 2, 120)
+            log.warning("Gemini %s on %s%s; retry %d in %.0fs", "quota limit" if quota else "transient error", model, tool, attempt + 1, wait)
+            time.sleep(wait)
+    raise RuntimeError("unreachable")  # pragma: no cover
+
+
+def _output_text(interaction) -> str:
+    text = _get(interaction, "output_text")
+    if text:
+        return text
+    parts = []
+    for step in _get(interaction, "steps", []) or []:
+        if _get(step, "type") == "model_output":
+            for block in _get(step, "content", []) or []:
+                if _get(block, "type") == "text":
+                    parts.append(_get(block, "text", ""))
+    return "\n".join(parts)
+
+
+def citations(interaction) -> list[dict]:
+    """Collect url_citation annotations (url, title) from a grounded interaction."""
+    seen, out = set(), []
+    for step in _get(interaction, "steps", []) or []:
+        if _get(step, "type") != "model_output":
+            continue
+        for block in _get(step, "content", []) or []:
+            for ann in _get(block, "annotations", []) or []:
+                if _get(ann, "type") != "url_citation":
+                    continue
+                url = _get(ann, "url")
+                if url and url not in seen:
+                    seen.add(url)
+                    out.append({"url": url, "title": _get(ann, "title") or ""})
+    return out
+
+
+def _extract_json(text: str) -> str:
+    m = re.search(r"```(?:json)?\s*(\{.*\}|\[.*\])\s*```", text, re.S)
+    if m:
+        return m.group(1)
+    start = min([i for i in (text.find("{"), text.find("[")) if i >= 0], default=-1)
+    if start < 0:
+        raise ValueError("No JSON found in model output")
+    end = max(text.rfind("}"), text.rfind("]"))
+    return text[start : end + 1]
+
+
+def _thinking(level: str | None) -> dict:
+    level = level or cfg()["models"].get("thinking_level")
+    return {"generation_config": {"thinking_level": level}} if level else {}
+
+
+def grounded_text(prompt: str, system: str | None = None, thinking: str | None = None) -> tuple[str, list[dict]]:
+    """Text answer grounded with Google Search. Returns (text, citations). Raises QuotaError if search is unavailable."""
+    if not search_available():
+        raise QuotaError("Google Search grounding unavailable earlier in this run")
+    body = dict(model=cfg()["models"]["text"], input=prompt, tools=[{"type": "google_search"}], **_thinking(thinking))
+    if system:
+        body["system_instruction"] = system
+    it = _call(**body)
+    return _output_text(it), citations(it)
+
+
+def structured(prompt: str, schema: Type[T], system: str | None = None, search: bool = False, thinking: str | None = None) -> T:
+    """Structured JSON output validated against a pydantic model."""
+    body = dict(
+        model=cfg()["models"]["text"],
+        input=prompt,
+        response_format={"type": "text", "mime_type": "application/json", "schema": schema.model_json_schema()},
+        **_thinking(thinking),
+    )
+    if system:
+        body["system_instruction"] = system
+    if search and not search_available():
+        search = False
+    if search:
+        body["tools"] = [{"type": "google_search"}]
+    last_err: Exception | None = None
+    for attempt in range(3):
+        try:
+            it = _call(**body)
+        except QuotaError:
+            if not search:
+                raise
+            log.warning("Google Search grounding unavailable (quota / free tier) — continuing without search")
+            search = False
+            body.pop("tools", None)
+            continue
+        except Exception as e:
+            # Structured output + search is a preview combo; fall back to free text + JSON extraction.
+            if search and "response_format" in body:
+                log.warning("Structured+search rejected (%s); falling back to text JSON", e)
+                body.pop("response_format")
+                body["input"] = prompt + "\n\nReturn ONLY a JSON object matching this JSON Schema:\n" + json.dumps(schema.model_json_schema())
+                continue
+            raise
+        raw = _output_text(it)
+        try:
+            return schema.model_validate_json(raw)
+        except ValidationError as e:
+            try:
+                return schema.model_validate_json(_extract_json(raw))
+            except Exception:
+                last_err = e
+                log.warning("Schema validation failed (attempt %d): %s", attempt + 1, str(e)[:300])
+    raise RuntimeError(f"Gemini returned invalid JSON for {schema.__name__}: {last_err}")
+
+
+def text(prompt: str, system: str | None = None, thinking: str | None = None) -> str:
+    body = dict(model=cfg()["models"]["text"], input=prompt, **_thinking(thinking))
+    if system:
+        body["system_instruction"] = system
+    return _output_text(_call(**body))
+
+
+def image(prompt: str, aspect_ratio: str = "16:9") -> bytes:
+    """Generate an illustration. Returns JPEG bytes (SynthID-watermarked by Google)."""
+    it = _call(
+        model=cfg()["models"]["image"],
+        input=prompt,
+        response_format={"type": "image", "mime_type": "image/jpeg", "aspect_ratio": aspect_ratio, "image_size": "2K"},
+    )
+    img = _get(it, "output_image")
+    data = _get(img, "data")
+    if not data:
+        raise RuntimeError("Gemini image model returned no image")
+    return base64.b64decode(data) if isinstance(data, str) else bytes(data)
