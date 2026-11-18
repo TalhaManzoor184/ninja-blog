@@ -28,11 +28,35 @@ def article_text(a: Article) -> str:
     return "\n".join(out)
 
 
+def _trim(text: str, limit: int) -> str:
+    """Shorten at a sentence end if possible, else at a word boundary."""
+    text = " ".join(text.split())
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    dot = max(cut.rfind(". "), cut.rfind("? "), cut.rfind("! "))
+    if dot >= limit * 0.6:
+        return cut[:dot + 1]
+    return cut[:cut.rfind(" ")].rstrip(",;:-") + "."
+
+
+def repair(a: Article, categories: list[str]) -> None:
+    """Fix small, mechanical problems instead of rejecting a good article."""
+    if len(a.meta_description) > 158:
+        a.meta_description = _trim(a.meta_description, 155)
+    if len(a.seo_title) > 65:
+        a.seo_title = _trim(a.seo_title, 60).rstrip(".")
+    if categories and a.category not in categories:
+        low = {c.lower(): c for c in categories}
+        a.category = low.get(a.category.lower(), a.category)
+
+
 def check(a: Article, categories: list[str], site_url: str) -> list[str]:
     c = cfg()["article"]
     problems: list[str] = []
     if not a.keep:
         return []  # handled by the caller
+    repair(a, categories)
     n = words(article_text(a))
     if n < c["min_words"]:
         problems.append(f"Too short: {n} words, need at least {c['min_words']}.")

@@ -55,6 +55,8 @@ def cloudflare_image(prompt: str, aspect: str = "16:9") -> bytes | None:
             log.warning("Cloudflare image failed (%s): %s", r.status_code, r.text[:300])
             return None
         img = r.json().get("result", {}).get("image")
+        if img:
+            log.info("Image made with Cloudflare %s", model)
         return _crop(base64.b64decode(img), aspect) if img else None
     except Exception as e:
         log.warning("Cloudflare image skipped: %s", e)

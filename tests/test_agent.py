@@ -266,3 +266,14 @@ def test_cloudflare_image_used_first(monkeypatch):
     assert im.size == (1024, 576)  # cropped to 16:9
     assert "accounts/acc123/ai/run/@cf/black-forest-labs/flux-1-schnell" in sent["url"] and sent["auth"] == "Bearer tok"
     assert "no text" in sent["prompt"].lower() or "no text" in sent["prompt"]
+
+
+def test_repair_trims_long_meta_instead_of_failing():
+    from agent import quality
+    a = fake_article()
+    a.meta_description = ("Show live OData data in Power Apps without copying it into Dataverse. Set up a virtual table "
+                          "step by step with the OData v4 provider, plus the limits you should know.")
+    assert len(a.meta_description) > 158
+    a.category = "power apps"
+    assert quality.check(a, ["Power Apps"], "http://x") == []
+    assert len(a.meta_description) <= 155 and a.meta_description.endswith(".") and a.category == "Power Apps"
