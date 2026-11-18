@@ -28,7 +28,9 @@ from .wp import WP
 log = logging.getLogger("agent")
 
 DONE, DUP, NOT_KEPT, REVIEW, ERROR = "published", "duplicate", "not_kept", "needs_review", "error"
-FINAL = {DONE, DUP, NOT_KEPT}
+FLAGGED = "flagged"  # moved to draft by the audit (duplicate / low value): never rewritten or published again
+FINAL = {DONE, DUP, NOT_KEPT, FLAGGED}
+TODO = ("draft", "publish")  # posts the agent rewrites: drafts and published posts not rewritten yet
 
 
 # ---------------------------------------------------------------- state ----
@@ -69,12 +71,12 @@ def plan(posts: list[dict], state: dict) -> tuple[list[dict], dict[int, list[dic
     for g in groups(posts, cfg()["duplicates"]["similarity"]):
         keeper = pick_keeper(g, prio)
         for p in g:
-            if p is keeper or p["status"] != "draft":
+            if p is keeper or p["status"] not in TODO:
                 continue
             dups.append((p, keeper))
             related.setdefault(keeper["id"], []).append(p)
     dup_ids = {d["id"] for d, _ in dups}
-    drafts = [p for p in posts if p["status"] == "draft" and p["id"] not in dup_ids
+    drafts = [p for p in posts if p["status"] in TODO and p["id"] not in dup_ids
               and state["posts"].get(str(p["id"]), {}).get("status") not in FINAL | {REVIEW}]
 
     def order(p):
@@ -283,6 +285,8 @@ def cmd_run(wp: WP, post_id: int | None, dry_run: bool, count: int | None) -> in
             continue
         if action == "trash" and not dry_run:
             wp.trash_post(d["id"])
+        elif d["status"] == "publish" and not dry_run:  # never leave a duplicate live
+            wp.update_post(d["id"], {"status": "draft"})
         if not dry_run:
             mark(state, d, DUP, kept=keeper["id"], notes=f"Same topic as #{keeper['id']} ({action})")
 
@@ -326,7 +330,8 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check")
     sub.add_parser("scan")
-    sub.add_parser("audit")
+    au = sub.add_parser("audit")
+    au.add_argument("--draft", action="store_true", help="move the posts it flags to draft")
     r = sub.add_parser("run")
     r.add_argument("--post-id", type=int)
     r.add_argument("--dry-run", action="store_true")
@@ -339,7 +344,10 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_scan(wp)
     if a.cmd == "audit":
         from . import audit
-        text = audit.run(wp)
+        state = load_state()
+        text = audit.run(wp, draft=a.draft, state=state)
+        if a.draft:
+            save_state(state)
         print(text)
         if os.getenv("GITHUB_STEP_SUMMARY"):
             with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:

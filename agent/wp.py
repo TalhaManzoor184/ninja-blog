@@ -69,7 +69,13 @@ class WP:
 
     # ---- posts -----------------------------------------------------------
     def posts(self, status: str = "draft,publish,pending,future,private") -> list[dict]:
-        return self.get_all("/posts", status=status, context="edit", orderby="date", order="desc")
+        # order by id: many posts can share one date, and date order then repeats/skips posts across pages
+        seen, out = set(), []
+        for p in self.get_all("/posts", status=status, context="edit", orderby="id", order="asc"):
+            if p["id"] not in seen:
+                seen.add(p["id"])
+                out.append(p)
+        return out
 
     def post(self, post_id: int) -> dict:
         return self.get(f"/posts/{post_id}", context="edit")

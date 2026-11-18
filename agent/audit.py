@@ -72,7 +72,7 @@ def judge(posts: list[dict]) -> dict[int, Verdict]:
     return out
 
 
-def run(wp) -> str:
+def run(wp, draft: bool = False, state: dict | None = None) -> str:
     base = cfg()["site"]["url"]
     posts = wp.posts()
     for p in posts:
@@ -111,6 +111,18 @@ def run(wp) -> str:
             "url": p.get("link", ""),
         })
 
+    moved = []
+    if draft:
+        from .main import FLAGGED
+        for r in rows:
+            if r["verdict"] != "delete":
+                continue
+            if r["status"] == "publish":
+                wp.update_post(r["id"], {"status": "draft"})
+                r["status"] = "draft (moved)"
+                moved.append(r["id"])
+            if state is not None:
+                state["posts"][str(r["id"])] = {"status": FLAGGED, "title": r["title"], "notes": r["reason"]}
     rows.sort(key=lambda r: (r["verdict"] != "delete", "Duplicate" not in r["reason"], -r["impressions"], r["words"]))
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     with open(STATE_DIR / "audit.csv", "w", newline="", encoding="utf-8") as f:
@@ -120,7 +132,8 @@ def run(wp) -> str:
     dels = [r for r in rows if r["verdict"] == "delete"]
     md = [f"# Blog audit — {len(posts)} posts", "",
           f"**Suggested for deletion: {len(dels)}** (duplicates: {sum('Duplicate' in r['reason'] for r in dels)}). "
-          "Nothing was changed. Posts Google already shows are never on this list.", "",
+          + (f"**{len(moved)} moved from published to draft**; the agent will not publish them again. " if draft else "Nothing was changed. ")
+          + "Posts Google already shows are never on this list.", "",
           "| # | Status | Title | Words | Why | Edit |", "|---|---|---|---|---|---|"]
     for r in dels:
         t = r["title"].replace("|", "/")

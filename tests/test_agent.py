@@ -300,3 +300,21 @@ def test_audit_lists_duplicates_and_low_value_but_protects_google_posts(env, tmp
     assert rows[6]["verdict"] == "keep" and "313 impressions" in rows[6]["reason"]
     assert rows[1]["verdict"] == "keep" and rows[4]["verdict"] == "delete" and "Almost empty" in rows[4]["reason"]
     assert "post.php?post=2&action=edit" in (tmp_path / "state/audit.md").read_text()
+
+
+def test_audit_draft_moves_flagged_and_agent_skips_them(env, tmp_path, monkeypatch):
+    from agent import audit
+    from agent.audit import Verdicts
+    for p in FakeWP.posts:
+        p["status"] = "publish"
+    monkeypatch.setattr(audit, "STATE_DIR", tmp_path / "state")
+    monkeypatch.setattr(gemini, "structured", lambda prompt, schema, **k: Verdicts(items=[]) if schema is Verdicts else fake_article())
+    main.main(["audit", "--draft"])
+    drafted = {pid for pid, d in FakeWP.updates if d == {"status": "draft"}}
+    assert 2 in drafted and 4 in drafted  # duplicate + nearly empty post
+    st = json.loads((tmp_path / "state/progress.json").read_text())
+    assert st["posts"]["2"]["status"] == "flagged"
+    # published posts are now in the agent's queue, flagged ones are not
+    main.main(["run", "--count", "3"])
+    rewritten = [pid for pid, d in FakeWP.updates if "content" in d]
+    assert set(rewritten) == {1} and FakeWP.posts[1]["status"] == "draft"  # 2 duplicate and 3 near-empty stay flagged
