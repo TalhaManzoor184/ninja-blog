@@ -51,6 +51,18 @@
    "title": "How to Create and Configure a System Dashboard in Dynamics 365",
    "words": 1250
   },
+  "902": {
+   "at": "2026-11-18 13:19 UTC",
+   "images": 18,
+   "link": "https://thepowerappsninja.com/2024/06/08/create-a-virtual-table-in-power-apps-using-odata-v4-data-provider-complete-guide/",
+   "notes": "Expanded overall explanation, structured clear step blocks, added an architecture diagram and comparison table to exceed the 900-word requirement while ensuring accurate technical details for Dataverse virtual tables.",
+   "old_title": "Create a Virtual Table in Power Apps using OData v4 Data Provider [Complete Guide]",
+   "seo_title": "Create Virtual Table in Power Apps Using OData v4 Guide",
+   "slug": "create-a-virtual-table-in-power-apps-using-odata-v4-data-provider-complete-guide",
+   "status": "published",
+   "title": "Create a Virtual Table in Power Apps Using OData v4 Data Provider",
+   "words": 1057
+  },
   "967": {
    "at": "2026-11-18 01:44 UTC",
    "kept": 969,

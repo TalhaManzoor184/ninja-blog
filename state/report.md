@@ -1,14 +1,10 @@
 # Blog agent report — 2026-11-18
 
-- Published: **2**
+- Published: **3**
 - Waiting in queue: **198**
 - Duplicates set aside: **4**
-- Need your review: **1**
+- Need your review: **0**
 - Not worth publishing (left as draft): **0**
-
-## Need your review
-
-- #902 Create a Virtual Table in Power Apps using OData v4 Data Provider [Complete Guide] — meta_description is 162 characters; make it 130-155.
 
 ## Duplicates (copy → kept post)
 
@@ -37,5 +33,6 @@
 
 ## Published
 
+- 2026-11-18 [Create a Virtual Table in Power Apps Using OData v4 Data Provider](https://thepowerappsninja.com/2024/06/08/create-a-virtual-table-in-power-apps-using-odata-v4-data-provider-complete-guide/) — 1057 words
 - 2026-11-18 [Mastering the Power Apps LookUp Function: Syntax, Examples, and Performance](https://thepowerappsninja.com/2023/07/24/powerapps-lookupsource-filter-column/) — 982 words
 - 2026-11-18 [How to Create and Configure a System Dashboard in Dynamics 365](https://thepowerappsninja.com/2024/02/29/creating-a-system-dashboard-in-dynamics-365/) — 1250 words
