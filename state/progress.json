@@ -9,6 +9,18 @@
    "status": "duplicate",
    "title": "OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP"
   },
+  "270": {
+   "at": "2026-11-18 04:09 UTC",
+   "images": 7,
+   "link": "https://thepowerappsninja.com/2023/07/24/powerapps-lookupsource-filter-column/",
+   "notes": "Rewrote thin original draft into a detailed, professional tutorial. Added explicit comparison table for syntax variations, step-by-step instructions with real Power Fx code, a Mermaid flowchart for decision making, conceptual image prompt, and structured FAQs. Verified all technical details regarding delegation and reduction parameters.",
+   "old_title": "PowerApps Lookup(Source, Filter, COLUMN)",
+   "seo_title": "Power Apps LookUp Function Guide: Syntax & Best Practices",
+   "slug": "powerapps-lookupsource-filter-column",
+   "status": "published",
+   "title": "Mastering the Power Apps LookUp Function: Syntax, Examples, and Performance",
+   "words": 982
+  },
   "288": {
    "at": "2026-11-18 01:44 UTC",
    "kept": 274,
@@ -38,6 +50,14 @@
    "status": "published",
    "title": "How to Create and Configure a System Dashboard in Dynamics 365",
    "words": 1250
+  },
+  "902": {
+   "at": "2026-11-18 04:08 UTC",
+   "notes": "meta_description is 162 characters; make it 130-155.",
+   "old_title": "Create a Virtual Table in Power Apps using OData v4 Data Provider [Complete Guide]",
+   "slug": "create-a-virtual-table-in-power-apps-using-odata-v4-data-provider-complete-guide",
+   "status": "needs_review",
+   "title": "Create a Virtual Table in Power Apps using OData v4 Data Provider [Complete Guide]"
   },
   "967": {
    "at": "2026-11-18 01:44 UTC",
