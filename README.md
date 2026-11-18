@@ -44,6 +44,7 @@ Repo mein **Settings → Secrets and variables → Actions → New repository se
 | `WP_USER` | WordPress username (email nahi, username) |
 | `WP_APP_PASSWORD` | Step 1 wala password (spaces ke saath ya baghair, dono chalte hain) |
 | `GEMINI_API_KEY` | Wahi Gemini key jo Unknown Atlas mein hai |
+| `CF_ACCOUNT_ID`, `CF_API_TOKEN` | Ikhtiyari. Cloudflare Workers AI se free AI images (roz ~170 free). Token: My Profile → API Tokens → "Workers AI" template |
 
 Ikhtiyari **Variables** (isi page par "Variables" tab mein):
 

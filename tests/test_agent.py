@@ -240,3 +240,29 @@ def test_duplicate_rules():
     assert similarity(P("Open as Dialog using NavigateTo", a), P("Add on Form as control", b)) == 0.0
     assert similarity(P("Next stage in BPF", a), P("Next stage in BPF (continued)", b)) == 0.0
     assert similarity(P("Totally different", a), P("Another title", a)) == 1.0  # same text, new title
+
+
+def test_cloudflare_image_used_first(monkeypatch):
+    import io
+    from PIL import Image
+    buf = io.BytesIO(); Image.new("RGB", (1024, 1024), "purple").save(buf, "JPEG")
+    sent = {}
+
+    class R:
+        status_code = 200
+        def json(self):
+            return {"success": True, "result": {"image": base64.b64encode(buf.getvalue()).decode()}}
+
+    def post(url, headers, json, timeout):
+        sent.update(url=url, auth=headers["Authorization"], prompt=json["prompt"])
+        return R()
+    import requests
+    monkeypatch.setattr(requests, "post", post)
+    monkeypatch.setenv("CF_ACCOUNT_ID", "acc123")
+    monkeypatch.setenv("CF_API_TOKEN", "tok")
+    monkeypatch.setattr(gemini, "image", lambda *a, **k: (_ for _ in ()).throw(AssertionError("gemini should not be called")))
+    data = images.ai_image("data bridge")
+    im = Image.open(io.BytesIO(data))
+    assert im.size == (1024, 576)  # cropped to 16:9
+    assert "accounts/acc123/ai/run/@cf/black-forest-labs/flux-1-schnell" in sent["url"] and sent["auth"] == "Bearer tok"
+    assert "no text" in sent["prompt"].lower() or "no text" in sent["prompt"]

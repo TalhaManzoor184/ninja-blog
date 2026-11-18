@@ -29,6 +29,7 @@ models:
   text_fallback: "gemini-3.5-flash-lite"
   thinking_level: "medium"
   image: "gemini-nano-banana-2.1"
+  cloudflare_image: "@cf/black-forest-labs/flux-1-schnell"  # free via Cloudflare Workers AI; used first when CF_ACCOUNT_ID + CF_API_TOKEN are set
 
 run:
   posts_per_day: 1          # override with the POSTS_PER_DAY repo variable
