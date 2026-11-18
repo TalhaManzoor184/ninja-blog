@@ -1,16 +1,52 @@
 {
  "posts": {
+  "1068": {
+   "at": "2026-11-18 01:44 UTC",
+   "kept": 1069,
+   "notes": "Same topic as #1069 (skip)",
+   "old_title": "OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP",
+   "slug": "open-an-entity-view-in-javascript-power-apps-model-driven-app-2",
+   "status": "duplicate",
+   "title": "OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP"
+  },
+  "288": {
+   "at": "2026-11-18 01:44 UTC",
+   "kept": 274,
+   "notes": "Same topic as #274 (skip)",
+   "old_title": "How to use Autonumber field in Model Driven Apps",
+   "slug": "how-to-use-autonumber-field-in-model-driven-apps-2",
+   "status": "duplicate",
+   "title": "How to use Autonumber field in Model Driven Apps"
+  },
+  "690": {
+   "at": "2026-11-18 01:44 UTC",
+   "kept": 295,
+   "notes": "Same topic as #295 (skip)",
+   "old_title": "HOW TO SET A LOOKUP FIELD TO ANOTHER LOOKUP FIELD ON A DYNAMICS 365 POWER APPS FORM USING JAVASCRIPT",
+   "slug": "how-to-set-a-lookup-field-to-another-lookup-field-on-a-dynamics-365-power-apps-form-using-javascript-2",
+   "status": "duplicate",
+   "title": "HOW TO SET A LOOKUP FIELD TO ANOTHER LOOKUP FIELD ON A DYNAMICS 365 POWER APPS FORM USING JAVASCRIPT"
+  },
   "700": {
-   "at": "2026-11-17 22:07 UTC",
-   "images": 2,
+   "at": "2026-11-18 01:48 UTC",
+   "images": 20,
    "link": "https://thepowerappsninja.com/2024/02/29/creating-a-system-dashboard-in-dynamics-365/",
-   "notes": "Rewrote the brief, screenshot-dependent draft into an end-to-end technical tutorial. Retained the original scenario (2-column dashboard with Account list view, publishing requirement, and security roles). Added exact maker portal navigation steps, root cause analysis for the 'no components' error, the modern App Designer step, a comparison table, and an architectural Mermaid diagram.",
-   "old_title": "CREATING A SYSTEM DASHBOARD IN DYNAMICS 365",
-   "seo_title": "Create a System Dashboard in Dynamics 365: Full Guide",
+   "notes": "Maintained the full technical flow of the original post while standardizing steps into structured blocks. Added the comparison table, diagram, and conceptual image block required by the prompt. Provided standard Dataverse best practices regarding publishing and security role inheritance.",
+   "old_title": "How to Create and Configure a System Dashboard in Dynamics 365",
+   "seo_title": "Dynamics 365 System Dashboard: Build and Configure",
    "slug": "creating-a-system-dashboard-in-dynamics-365",
    "status": "published",
-   "title": "How to Create and Publish a System Dashboard in Dynamics 365",
-   "words": 1245
+   "title": "How to Create and Configure a System Dashboard in Dynamics 365",
+   "words": 1250
+  },
+  "967": {
+   "at": "2026-11-18 01:44 UTC",
+   "kept": 969,
+   "notes": "Same topic as #969 (skip)",
+   "old_title": "DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS",
+   "slug": "dataverse-how-the-relatedentities-plugin-works-2",
+   "status": "duplicate",
+   "title": "DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS"
   }
  }
 }

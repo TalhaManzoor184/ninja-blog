@@ -1,16 +1,14 @@
-# Blog agent report — 2026-11-17
+# Blog agent report — 2026-11-18
 
 - Published: **1**
-- Waiting in queue: **198**
-- Duplicates set aside: **6**
+- Waiting in queue: **200**
+- Duplicates set aside: **4**
 - Need your review: **0**
 - Not worth publishing (left as draft): **0**
 
 ## Duplicates (copy → kept post)
 
-- #605 USING JAVASCRIPT TO GO TO NEXT STAGE IN BUSINESS PROCESS FLOWS → #592 USING JAVASCRIPT TO GO TO NEXT STAGE IN BUSINESS PROCESS FLOWS (CONTINUED)
 - #967 DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS → #969 DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS
-- #1047 HTML Web Resource – Open as Dialog using NavigateTo and pass data from Form to HTML and back to Form → #1045 HTML Web Resource – Add on Form as control and pass data from Form to HTML and back to Form
 - #1068 OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP → #1069 OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP
 - #690 HOW TO SET A LOOKUP FIELD TO ANOTHER LOOKUP FIELD ON A DYNAMICS 365 POWER APPS FORM USING JAVASCRIPT → #295 How to Set Lookup Field in Dynamics 365 Using JavaScript on Power Apps Forms
 - #288 How to use Autonumber field in Model Driven Apps → #274 How to use Autonumber field in Model Driven Apps
@@ -35,4 +33,4 @@
 
 ## Published
 
-- 2026-11-17 [CREATING A SYSTEM DASHBOARD IN DYNAMICS 365](https://thepowerappsninja.com/2024/02/29/creating-a-system-dashboard-in-dynamics-365/) — 1245 words
+- 2026-11-18 [How to Create and Configure a System Dashboard in Dynamics 365](https://thepowerappsninja.com/2024/02/29/creating-a-system-dashboard-in-dynamics-365/) — 1250 words
