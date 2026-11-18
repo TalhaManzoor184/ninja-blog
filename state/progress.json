@@ -1,12 +1,8 @@
 {
  "posts": {
   "1068": {
-   "at": "2026-11-18 01:44 UTC",
-   "kept": 1069,
-   "notes": "Same topic as #1069 (skip)",
-   "old_title": "OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP",
-   "slug": "open-an-entity-view-in-javascript-power-apps-model-driven-app-2",
-   "status": "duplicate",
+   "notes": "Duplicate of #1069 \"OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP\" (keep that one)",
+   "status": "flagged",
    "title": "OPEN AN ENTITY VIEW IN JAVASCRIPT POWER APPS MODEL DRIVEN APP"
   },
   "270": {
@@ -30,13 +26,19 @@
    "status": "duplicate",
    "title": "How to use Autonumber field in Model Driven Apps"
   },
+  "510": {
+   "notes": "Dated feedback site link with no lasting technical how-to value.",
+   "status": "flagged",
+   "title": "HOW TO SUBMIT AND VIEW PRODUCT IDEAS FOR DYNAMICS 365 APPLICATIONS"
+  },
+  "607": {
+   "notes": "Dated release announcement with no lasting tutorial value.",
+   "status": "flagged",
+   "title": "HOW TO UPDATE DYNAMICS 365 TO 2020 RELEASE WAVE 1"
+  },
   "690": {
-   "at": "2026-11-18 01:44 UTC",
-   "kept": 295,
-   "notes": "Same topic as #295 (skip)",
-   "old_title": "HOW TO SET A LOOKUP FIELD TO ANOTHER LOOKUP FIELD ON A DYNAMICS 365 POWER APPS FORM USING JAVASCRIPT",
-   "slug": "how-to-set-a-lookup-field-to-another-lookup-field-on-a-dynamics-365-power-apps-form-using-javascript-2",
-   "status": "duplicate",
+   "notes": "Duplicate of #295 \"How to Set Lookup Field in Dynamics 365 Using JavaScript on Power Apps Forms\" (keep that one)",
+   "status": "flagged",
    "title": "HOW TO SET A LOOKUP FIELD TO ANOTHER LOOKUP FIELD ON A DYNAMICS 365 POWER APPS FORM USING JAVASCRIPT"
   },
   "700": {
@@ -64,12 +66,8 @@
    "words": 1057
   },
   "967": {
-   "at": "2026-11-18 01:44 UTC",
-   "kept": 969,
-   "notes": "Same topic as #969 (skip)",
-   "old_title": "DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS",
-   "slug": "dataverse-how-the-relatedentities-plugin-works-2",
-   "status": "duplicate",
+   "notes": "Duplicate of #969 \"DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS\" (keep that one)",
+   "status": "flagged",
    "title": "DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS"
   }
  }
