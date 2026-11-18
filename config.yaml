@@ -42,6 +42,7 @@ article:
   min_sections: 3
   featured_image: true      # one AI illustration as the featured image (no text, no logos)
   inline_ai_images: 1       # extra AI illustrations inside the article
+  step_images: true         # a "Step N of M" card image under every step heading (drawn locally, no quota)
   diagrams: 1               # step/flow diagrams drawn from Mermaid (needs mermaid-cli; skipped if missing)
 
 duplicates:

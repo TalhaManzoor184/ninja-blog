@@ -148,8 +148,16 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
         n_img += 1
         return upload(data, name, alt, b.caption or "")
 
+    def step_img(step, n: int, total: int, idx: int) -> Media | None:
+        if not cfg()["article"].get("step_images", True):
+            return None
+        nonlocal n_img
+        data = cards.step_card(n, total, step.title, step.detail, step.code)
+        n_img += 1
+        return upload(data, f"{slug}-step-{idx}-{n}.jpg", f"Step {n}: {step.title}"[:200])
+
     refs = research.reference_urls if research else []
-    content = render(article, resolve, refs)
+    content = render(article, resolve, refs, step_img)
 
     featured_id = None
     if cfg()["article"].get("featured_image"):

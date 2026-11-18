@@ -180,7 +180,9 @@ def test_run_publishes_priority_post_and_sets_aside_duplicate(env, tmp_path):
     assert "Step 2: Add the data source" in c and "<code>GET /api/data</code>" in c
     assert '"@type": "FAQPage"' in c
     assert "learn.microsoft.com" in c and "evil.example" not in c
-    assert len(FakeWP.media) == 2  # featured + 1 inline illustration (no mermaid in test env)
+    assert len(FakeWP.media) == 4  # featured + 1 inline illustration + 2 step cards (no mermaid in test env)
+    assert "<h6 class=\"wp-block-heading\">Step 1: Open the maker portal</h6>" in c and '{"level": 6}' in c
+    assert c.index("Step 1: Open") < c.index("wp-image-") < c.index("Go to make.powerapps.com")
     state = json.loads((tmp_path / "state/progress.json").read_text())
     assert state["posts"]["3"]["status"] == "published"
     assert state["posts"]["2"]["status"] == "duplicate" and state["posts"]["2"]["kept"] == 1
@@ -221,8 +223,8 @@ def test_featured_falls_back_to_title_card_without_image_quota(env, monkeypatch)
     monkeypatch.setattr(gemini, "image", no_quota)
     assert main.main(["run"]) == 0
     _, data = FakeWP.updates[-1]
-    assert data["featured_media"] and len(FakeWP.media) == 1  # title card only, no inline AI image
-    assert FakeWP.media[0]["bytes"] > 10000
+    assert data["featured_media"] and len(FakeWP.media) == 3  # 2 step cards + title card, no inline AI image
+    assert all(m["bytes"] > 10000 for m in FakeWP.media)
 
 
 def test_duplicate_rules():

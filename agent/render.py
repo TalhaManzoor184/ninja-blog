@@ -21,6 +21,9 @@ class Media:
 
 # (block, index) -> uploaded media, or None if the image could not be made
 MediaResolver = Callable[[Block, int], Optional[Media]]
+# (step, step number, steps in the block, block index) -> image for that step, or None
+StepResolver = Callable[[object, int, int, int], Optional[Media]]
+SUB = 6  # sub-heading level for steps and FAQ questions (H6 keeps them small in the theme)
 
 
 def slugify(t: str) -> str:
@@ -71,7 +74,7 @@ def raw_html(s: str) -> str:
     return f"<!-- wp:html -->\n{s}\n<!-- /wp:html -->"
 
 
-def render_block(b: Block, idx: int, resolve: MediaResolver) -> list[str]:
+def render_block(b: Block, idx: int, resolve: MediaResolver, step_img: StepResolver | None = None) -> list[str]:
     out: list[str] = []
     if b.type == "paragraph" and b.text:
         out.append(p(b.text))
@@ -86,7 +89,10 @@ def render_block(b: Block, idx: int, resolve: MediaResolver) -> list[str]:
         out.append(table(b.table_header, [(r + [""] * n)[:n] for r in b.table_rows]))
     elif b.type == "steps" and b.steps:
         for n, s in enumerate(b.steps, 1):
-            out.append(h(f"Step {n}: {s.title}", 3))
+            out.append(h(f"Step {n}: {s.title}", SUB))
+            m = step_img(s, n, len(b.steps), idx) if step_img else None
+            if m:
+                out.append(image(m))
             out.append(p(s.detail))
             if s.code:
                 out.append(code(s.code))
@@ -103,7 +109,8 @@ def faq_schema(article: Article) -> str:
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
 
 
-def render(article: Article, resolve: MediaResolver, references: list[str] | None = None) -> str:
+def render(article: Article, resolve: MediaResolver, references: list[str] | None = None,
+           step_img: StepResolver | None = None) -> str:
     parts: list[str] = [p(t) for t in article.intro]
     if article.key_takeaways:
         parts.append(h("Key takeaways", 2, "key-takeaways"))
@@ -117,12 +124,12 @@ def render(article: Article, resolve: MediaResolver, references: list[str] | Non
         seen.add(anchor)
         parts.append(h(sec.heading, 2, anchor))
         for b in sec.blocks:
-            parts.extend(render_block(b, idx, resolve))
+            parts.extend(render_block(b, idx, resolve, step_img))
             idx += 1
     if article.faqs:
         parts.append(h("Frequently asked questions", 2, "faq"))
         for f in article.faqs:
-            parts.append(h(f.q, 3))
+            parts.append(h(f.q, SUB))
             parts.append(p(f.a))
         parts.append(raw_html(faq_schema(article)))
     refs = [u for u in (references or []) if re.match(r"^https://learn\.microsoft\.com/", u)]
