@@ -30,8 +30,9 @@ def groups(posts: list[dict], threshold: float) -> list[list[dict]]:
     for p in posts:
         if "_text" not in p:
             p["_text"] = html_to_text(p["content"]["raw"])
+        if "_sh" not in p:
             p["_sh"] = shingles(p["_text"])
-            p["_words"] = words(p["_text"])
+        p.setdefault("_words", words(p["_text"]))
     parent = list(range(len(posts)))
 
     def find(i):

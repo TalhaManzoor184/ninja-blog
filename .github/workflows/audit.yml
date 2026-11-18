@@ -1,0 +1,38 @@
+name: Audit posts (duplicates / low value)
+
+# Lists posts that look like duplicates or low-value content, with edit links.
+# Changes nothing in WordPress. Results: run Summary, state/audit.md and state/audit.csv.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Audit
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TEXT_MODEL: ${{ vars.GEMINI_TEXT_MODEL }}
+        run: python -m agent.main audit
+      - name: Save audit
+        run: |
+          git config user.name "ninja-blog-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/audit.md state/audit.csv
+          git diff --cached --quiet && exit 0
+          git commit -m "Blog audit $(date -u +%F)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1

@@ -277,3 +277,26 @@ def test_repair_trims_long_meta_instead_of_failing():
     a.category = "power apps"
     assert quality.check(a, ["Power Apps"], "http://x") == []
     assert len(a.meta_description) <= 155 and a.meta_description.endswith(".") and a.category == "Power Apps"
+
+
+def test_audit_lists_duplicates_and_low_value_but_protects_google_posts(env, tmp_path, monkeypatch):
+    from agent import audit
+    from agent.audit import Verdict, Verdicts
+    FakeWP.posts.append({**make_posts()[2], "id": 5, "slug": "event-recap", "title": {"raw": "We attended a conference"},
+                         "content": {"raw": "<p>" + "Nice event with friends and food. " * 20 + "</p>"}})
+    FakeWP.posts.append({**make_posts()[2], "id": 6, "slug": "status-reason", "title": {"raw": "Old off-topic but famous"},
+                         "content": {"raw": "<p>" + "Off topic text here. " * 30 + "</p>"}})
+    monkeypatch.setattr(audit, "STATE_DIR", tmp_path / "state")
+    prio = tmp_path / "p.txt"
+    prio.write_text("status-reason  # 313 impressions, 8 clicks\n")
+    monkeypatch.setattr(audit, "PRIORITY_FILE", prio)
+    monkeypatch.setattr(gemini, "structured", lambda prompt, schema, **k: Verdicts(items=[
+        Verdict(id=5, verdict="delete", reason="Event recap, no lasting value"),
+        Verdict(id=6, verdict="delete", reason="Off-topic")]))
+    text = main.main(["audit"]) or (tmp_path / "state/audit.md").read_text()
+    rows = {int(r["id"]): r for r in __import__("csv").DictReader(open(tmp_path / "state/audit.csv"))}
+    assert rows[2]["verdict"] == "delete" and "Duplicate of #1" in rows[2]["reason"]
+    assert rows[5]["verdict"] == "delete"
+    assert rows[6]["verdict"] == "keep" and "313 impressions" in rows[6]["reason"]
+    assert rows[1]["verdict"] == "keep" and rows[4]["verdict"] == "delete" and "Almost empty" in rows[4]["reason"]
+    assert "post.php?post=2&action=edit" in (tmp_path / "state/audit.md").read_text()

@@ -326,6 +326,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check")
     sub.add_parser("scan")
+    sub.add_parser("audit")
     r = sub.add_parser("run")
     r.add_argument("--post-id", type=int)
     r.add_argument("--dry-run", action="store_true")
@@ -336,6 +337,14 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_check(wp)
     if a.cmd == "scan":
         return cmd_scan(wp)
+    if a.cmd == "audit":
+        from . import audit
+        text = audit.run(wp)
+        print(text)
+        if os.getenv("GITHUB_STEP_SUMMARY"):
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+                f.write(text)
+        return 0
     return cmd_run(wp, a.post_id, a.dry_run, a.count)
 
 
