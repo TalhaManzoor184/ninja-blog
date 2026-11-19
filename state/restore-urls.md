@@ -1,4 +1,4 @@
-# Restore original URLs (dry run)
+# Restore original URLs 
 
 - Moved back to the Google URL: **101**
 - Already on the right URL: **16**
