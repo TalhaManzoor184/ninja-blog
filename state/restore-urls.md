@@ -1,0 +1,134 @@
+# Restore original URLs (dry run)
+
+- Moved back to the Google URL: **101**
+- Already on the right URL: **16**
+- Not restored (see below): **0**
+- Google URL with no matching post (deleted or renamed): **20**
+
+## Restored
+
+- #888 2026-11-18 → https://thepowerappsninja.com/2024/06/09/understanding-status-status-reason-in-power-apps/
+- #941 2026-11-18 → https://thepowerappsninja.com/2024/06/05/how-to-force-sync-an-user-in-dynamics-365-using-powershell-script/
+- #945 2026-11-18 → https://thepowerappsninja.com/2024/06/04/approve-the-deployment-of-solutions-using-pipelines-in-the-power-platform/
+- #998 2026-11-18 → https://thepowerappsninja.com/2024/04/01/power-automate-all-the-http-connectors-and-what-they-do/
+- #949 2026-11-18 → https://thepowerappsninja.com/2024/04/02/automated-solution-deployment-with-pipelines-in-power-platform-complete-guide/
+- #895 2026-11-18 → https://thepowerappsninja.com/2024/06/08/advantages-disadvantages-of-using-virtual-tables-in-power-apps/
+- #535 2026-11-18 → https://thepowerappsninja.com/2025/08/28/getting-plural-names-of-entities-using-webapi/
+- #1063 2026-11-18 → https://thepowerappsninja.com/2024/03/31/understanding-scope-in-business-rule-in-dynamics-365-or-dataverse/
+- #914 2026-11-18 → https://thepowerappsninja.com/2024/06/08/how-to-restrict-users-from-creating-new-environments-in-power-apps/
+- #681 2026-11-18 → https://thepowerappsninja.com/2024/03/02/creating-a-custom-action-and-calling-it-from-web-api-in-dynamics-365-power-apps/
+- #886 2026-11-18 → https://thepowerappsninja.com/2024/06/09/learn-to-parse-json-in-power-apps-using-power-fx-formula/
+- #963 2026-11-18 → https://thepowerappsninja.com/2024/04/01/limitations-of-business-rules-in-microsoft-dynamics-365/
+- #517 2026-11-18 → https://thepowerappsninja.com/2025/08/28/disabling-export-to-excel-in-dynamics-365/
+- #508 2026-11-18 → https://thepowerappsninja.com/2024/06/26/how-to-easily-install-updates-to-xrmtoolbox-tools/
+- #311 2026-11-18 → https://thepowerappsninja.com/2020/09/10/multi-select-option-set-field-in-dynamics-365-v9-0-microsoft-dynamics-crm-multiselect-option-sets-pros-and-cons/
+- #927 2026-11-18 → https://thepowerappsninja.com/2024/06/08/what-are-microsoft-dataverse-api-limits/
+- #267 2026-11-18 → https://thepowerappsninja.com/2023/08/25/checking-dirty-fields-in-dynamics-365-using-javascript/
+- #853 2026-11-18 → https://thepowerappsninja.com/2025/08/28/understanding-reusable-power-fx-formulas-in-canvas-app/
+- #1431 2026-11-18 → https://thepowerappsninja.com/2024/04/02/microsoft-power-platform-cli-install-in-visual-studio-code/
+- #943 2026-11-18 → https://thepowerappsninja.com/2024/06/05/migrate-non-solutions-flows-into-a-solution-using-powershell-in-power-automate/
+- #587 2026-11-18 → https://thepowerappsninja.com/2024/03/02/installing-and-using-power-apps-in-powershell-for-admins-and-creators/
+- #295 2026-11-18 → https://thepowerappsninja.com/2022/10/04/how-to-set-a-lookup-field-to-another-lookup-field-on-a-dynamics-365-power-apps-form-using-javascript/
+- #289 2026-11-18 → https://thepowerappsninja.com/2023/04/28/dynamic-crm-365-javascript-best-practice/
+- #836 2026-11-18 → https://thepowerappsninja.com/2024/03/09/changing-web-url-address-suffix-in-model-driven-app-power-app/
+- #721 2026-11-18 → https://thepowerappsninja.com/2024/02/29/how-to-setup-and-configure-dynamics-365-portals-2/
+- #1538 2026-11-18 → https://thepowerappsninja.com/2024/06/04/power-apps-portals-custom-lookup-filter/
+- #1516 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-pages-autocomplete-lookup-dropdown/
+- #601 2026-11-18 → https://thepowerappsninja.com/2024/03/02/focus-on-a-tab-using-javascript-in-dynamics-365/
+- #615 2026-11-18 → https://thepowerappsninja.com/2025/08/28/how-to-embed-forms-pro-inside-a-power-apps-canvas-app/
+- #1036 2026-11-18 → https://thepowerappsninja.com/2024/03/31/encode-uri-and-decode-uri-in-power-automate/
+- #757 2026-11-18 → https://thepowerappsninja.com/2024/02/29/creating-a-custom-component-using-the-powerapps-component-framework-pcf/
+- #572 2026-11-18 → https://thepowerappsninja.com/2024/03/02/error-loading-ribbon-workbench-in-xrmtoolbox/
+- #707 2026-11-18 → https://thepowerappsninja.com/2024/02/29/showing-an-error-through-javascript-in-power-apps-and-dynamics-365/
+- #698 2026-11-18 → https://thepowerappsninja.com/2024/02/29/using-calendar-control-in-dynamics-365-power-apps-dashboard-components/
+- #559 2026-11-18 → https://thepowerappsninja.com/2024/03/05/find-out-when-a-dynamics-365-version-update-is-scheduled-for-installation/
+- #980 2026-11-18 → https://thepowerappsninja.com/2024/04/01/how-to-master-power-automate-scripts/
+- #705 2026-11-18 → https://thepowerappsninja.com/2024/02/29/retrieving-entity-metadata-in-dynamics-365-with-javascript/
+- #751 2026-11-18 → https://thepowerappsninja.com/2024/02/29/creating-custom-workflow-activities-workflow-extensions-in-dynamics-365-and-powerapps/
+- #1091 2026-11-18 → https://thepowerappsninja.com/2024/03/31/how-to-make-fields-read-only-in-power-pages-form-using-javascript/
+- #953 2026-11-18 → https://thepowerappsninja.com/2024/04/01/understanding-and-configuring-the-refresh-cadence-in-power-apps/
+- #1082 2026-11-18 → https://thepowerappsninja.com/2024/03/31/exporting-and-importing-solutions-in-power-apps-a-comprehensive-guide/
+- #583 2026-11-18 → https://thepowerappsninja.com/2025/08/28/updating-lookup-fields-in-javascript-using-xrm-webapi/
+- #694 2026-11-18 → https://thepowerappsninja.com/2024/02/29/run-javascript-when-user-clicks-on-unified-interface-tab/
+- #570 2026-11-18 → https://thepowerappsninja.com/2024/03/02/merge-solutions-in-dynamics-365-power-apps-using-solution-components-mover/
+- #1057 2026-11-18 → https://thepowerappsninja.com/2024/03/31/system-jobs-in-dataverse-dynamics-365-status-information/
+- #623 2026-11-18 → https://thepowerappsninja.com/2024/02/28/how-to-get-the-appid-of-a-dynamic-365-power-app-using-javascript/
+- #1540 2026-11-18 → https://thepowerappsninja.com/2024/06/04/power-apps-portals-javascript-tip-03-load-edit-modal-after-record-creation/
+- #1421 2026-11-18 → https://thepowerappsninja.com/2024/04/02/create-the-virtual-tables-in-dataverse-with-the-virtual-connector-provider-part-2/
+- #1514 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-pages-adding-wildcard-on-list-search/
+- #549 2026-11-18 → https://thepowerappsninja.com/2025/08/28/using-configuration-pages-in-dynamics-365-power-apps-solutions/
+- #939 2026-11-18 → https://thepowerappsninja.com/2024/06/08/what-is-tenant-isolation-how-to-restrict-cross-tenant-connectivity-in-power-platform/
+- #598 2026-11-18 → https://thepowerappsninja.com/2024/03/02/bulk-edit-of-records-in-dynamics-365/
+- #1532 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-apps-portals-entity-list-making-the-entire-row-clickable/
+- #855 2026-11-18 → https://thepowerappsninja.com/2025/08/28/environment-cleanup-automating-processes-in-the-power-platform/
+- #747 2026-11-18 → https://thepowerappsninja.com/2024/02/29/configuring-app-suffixes-for-friendly-url-names-for-dynamics-365/
+- #916 2026-11-18 → https://thepowerappsninja.com/2024/06/08/how-to-retrieve-entity-table-metadata-in-power-apps-using-sdk-for-net/
+- #1026 2026-11-18 → https://thepowerappsninja.com/2024/03/31/office-scripts-code-review/
+- #1032 2026-11-18 → https://thepowerappsninja.com/2024/03/31/power-automate-how-to-test-your-flows/
+- #908 2026-11-18 → https://thepowerappsninja.com/2024/06/08/understand-and-enable-default-environment-routing-in-power-platform/
+- #879 2026-11-18 → https://thepowerappsninja.com/2024/06/10/exploring-top-competitors-of-microsoft-power-apps/
+- #313 2026-11-18 → https://thepowerappsninja.com/2020/08/22/microsoft-dynamics-365-app-for-outlook-dynamics-crm-365/
+- #287 2026-11-18 → https://thepowerappsninja.com/2023/06/03/calculated-fields-considerations-dynamic-crm-fields/
+- #312 2026-11-18 → https://thepowerappsninja.com/2020/08/24/send-an-email-to-the-user-who-is-not-associated-with-any-record-dynamics-crm-365/
+- #434 2026-11-18 → https://thepowerappsninja.com/2024/03/05/installing-pcf-gallery-components-when-no-solution-zip-exists/
+- #892 2026-11-18 → https://thepowerappsninja.com/2024/06/09/how-to-disable-hide-the-try-the-new-look-feature-in-model-driven-app-power-app/
+- #847 2026-11-18 → https://thepowerappsninja.com/2025/08/28/encoding-of-urls-and-understanding-its-advantages-in-canvas-apps/
+- #1088 2026-11-18 → https://thepowerappsninja.com/2024/03/31/hide-form-field-in-power-pages-by-using-javascript/
+- #1045 2026-11-18 → https://thepowerappsninja.com/2024/03/31/html-web-resource-add-on-form-as-control-and-pass-data-from-form-to-html-and-back-to-form/
+- #978 2026-11-18 → https://thepowerappsninja.com/2024/04/01/5-scripts-every-power-automate-developer-should-know/
+- #929 2026-11-18 → https://thepowerappsninja.com/2024/06/08/understanding-the-database-transaction-constraints-in-microsoft-dataverse/
+- #890 2026-11-18 → https://thepowerappsninja.com/2024/06/09/what-is-an-enhanced-data-model-in-microsoft-power-pages/
+- #711 2026-11-18 → https://thepowerappsninja.com/2024/02/29/using-javascript-to-add-spinner-and-block-ui-in-dynamics-365-and-power-apps/
+- #413 2026-11-18 → https://thepowerappsninja.com/2024/02/24/how-to-use-pcf-controls-in-power-pages/
+- #1523 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-apps-portals-identify-portal-user-via-plug-in/
+- #714 2026-11-18 → https://thepowerappsninja.com/2024/02/29/how-to-set-button-icons-in-unified-interface-and-dynamics-365-power-apps/
+- #1530 2026-11-18 → https://thepowerappsninja.com/2024/04/09/powershell-adding-custom-http-response-headers/
+- #923 2026-11-18 → https://thepowerappsninja.com/2024/06/08/how-to-execute-messages-within-a-single-database-transaction-using-executetransactionrequest/
+- #991 2026-11-18 → https://thepowerappsninja.com/2024/04/01/power-automate-orchestrating-your-flows/
+- #685 2026-11-18 → https://thepowerappsninja.com/2024/02/29/how-to-create-trigger-and-run-power-automate-flows-in-dynamics-365-and-power-apps/
+- #284 2026-11-18 → https://thepowerappsninja.com/2023/06/03/difference-between-custom-workflow-and-plugin/
+- #473 2026-11-18 → https://thepowerappsninja.com/2025/08/28/sharepoint-and-power-apps-integration-with-virtual-tables/
+- #1060 2026-11-18 → https://thepowerappsninja.com/2024/03/31/sample-code-set-lookup-view-dynamically-in-dynamics-365-or-power-apps-model-driven-app-form/
+- #974 2026-11-18 → https://thepowerappsninja.com/2024/04/01/top-5-ways-to-optimize-your-flows/
+- #1075 2026-11-18 → https://thepowerappsninja.com/2024/03/31/open-an-html-web-resource-in-a-dialog-pop-up-box/
+- #906 2026-11-18 → https://thepowerappsninja.com/2024/06/08/how-to-customize-maker-welcome-content-in-power-apps/
+- #1593 2026-11-18 → https://thepowerappsninja.com/2024/05/03/filtered-custom-subgrid-based-on-dynamic-value/
+- #577 2026-11-18 → https://thepowerappsninja.com/2024/03/02/getting-the-selected-record-in-a-subgrid-using-executioncontext/
+- #976 2026-11-18 → https://thepowerappsninja.com/2024/04/01/power-automate-the-best-way-to-write-to-excel/
+- #1528 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-apps-portals-remove-default-value-on-lookup-modal/
+- #1069 2026-11-18 → https://thepowerappsninja.com/2024/03/31/open-an-entity-view-in-javascript-power-apps-model-driven-app/
+- #1403 2026-11-18 → https://thepowerappsninja.com/2024/04/02/power-apps-portal-11-enabling-terms-and-conditions-for-authenticate-user/
+- #688 2026-11-18 → https://thepowerappsninja.com/2024/02/29/sending-an-input-variable-and-getting-an-output-variable-from-a-web-api-action-call-using-postman/
+- #1536 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-apps-portals-adding-parameters-in-menu-links/
+- #986 2026-11-18 → https://thepowerappsninja.com/2024/04/01/dataflows-hidden-gem-for-power-automate/
+- #996 2026-11-18 → https://thepowerappsninja.com/2024/04/01/power-automate-the-power-of-human-in-the-loop/
+- #1028 2026-11-18 → https://thepowerappsninja.com/2024/03/31/what-not-to-do-in-power-automate/
+- #1534 2026-11-18 → https://thepowerappsninja.com/2024/04/09/power-apps-portals-loading-large-data-in-entity-lists/
+- #625 2026-11-18 → https://thepowerappsninja.com/2024/03/02/cant-see-omnichannel-in-list-of-dynamics-365-apps/
+- #1542 2026-11-18 → https://thepowerappsninja.com/2024/06/05/power-apps-portals-going-beyond-with-portals-using-web-api/
+- #2501 2026-11-18 → https://thepowerappsninja.com/2025/08/28/allow-users-to-upload-only-specific-extension-files-in-power-pages/
+- #278 2026-11-18 → https://thepowerappsninja.com/2023/06/03/so-try-to-slice-your-plugin-in-more-than-one-plugin-that-each-executes-in-less-than-10-seconds/
+
+## No matching post
+
+- https://thepowerappsninja.com/2023/07/28/how-to-make-field-mandatory-and-non-mandatory-using-jquery-in-basic-entity-forms-of-ms-power-apps-portal/ (208 impressions)
+- https://thepowerappsninja.com/2025/08/28/use-mock-xrm-to-upgrade-the-removed-clientglobalcontext-js-aspx-in-dynamics-365/ (116 impressions)
+- https://thepowerappsninja.com/2023/09/29/dynamics-crm-read-only-form-and-disable-fields-with-javascript/ (72 impressions)
+- https://thepowerappsninja.com/2023/06/03/how-to-remove-curly-braces-from-guid-d365-crm/ (68 impressions)
+- https://thepowerappsninja.com/2024/01/20/introduction-to-pipelines-for-power-platform-deploy-solutions-to-environments-tutorial/ (68 impressions)
+- https://thepowerappsninja.com/2023/06/08/unable-to-cast-object-of-type-microsoft-xrm-sdk-optionsetvalue-to-type-system-string/ (60 impressions)
+- https://thepowerappsninja.com/2025/08/28/how-to-fix-the-binary-operator-with-incompatible-types-webapi-error-in-dynamics-365/ (46 impressions)
+- https://thepowerappsninja.com/2023/06/03/powerapps-portal-field-mandatory/ (21 impressions)
+- https://thepowerappsninja.com/2025/08/28/offline-capability-for-canvas-apps-in-power-apps-mobile/ (18 impressions)
+- https://thepowerappsninja.com/2022/10/07/how-to-calculate-days-between-two-date-powerautomate/ (10 impressions)
+- https://thepowerappsninja.com/2024/06/08/download-free-microsoft-dynamics-365-icon-pack/ (9 impressions)
+- https://thepowerappsninja.com/2024/03/02/how-to-update-dynamics-365-to-2020-release-wave-1/ (7 impressions)
+- https://thepowerappsninja.com/2023/06/03/display-customized-bing-map-on-powerapps-portal/ (6 impressions)
+- https://thepowerappsninja.com/2023/07/15/how-to-use-microsoft-dataverse-create-your-first-table-and-columns/ (5 impressions)
+- https://thepowerappsninja.com/2020/07/06/how-to-lock-business-process-field-dynamics-crm-365/ (5 impressions)
+- https://thepowerappsninja.com/2022/10/07/javascript-split-method/ (4 impressions)
+- https://thepowerappsninja.com/2022/08/31/reverse-string-without-built-in-function-javascript/ (3 impressions)
+- https://thepowerappsninja.com/2023/06/03/get-record-from-cds-powerapps-portal/ (3 impressions)
+- https://thepowerappsninja.com/2025/08/28/dealing-with-deprecated-flip-controls-in-2021-release-wave-1-power-apps/ (2 impressions)
+- https://thepowerappsninja.com/2024/06/05/how-to-force-sync-an-user-in-dynamics-365-using/ (1 impressions)
+
