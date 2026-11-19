@@ -53,6 +53,18 @@
    "title": "How to Create and Configure a System Dashboard in Dynamics 365",
    "words": 1250
   },
+  "888": {
+   "at": "2026-11-19 13:44 UTC",
+   "images": 11,
+   "link": "https://thepowerappsninja.com/2024/06/09/understanding-status-status-reason-in-power-apps/",
+   "notes": "Cleaned up the duplicate content in the original draft. Replaced legacy classic CRM references with modern Dataverse / make.powerapps.com terminology while maintaining the accurate classic transition editor navigation. Provided concrete architecture rules (statecode vs statuscode), a mermaid transition diagram, a step-by-step transition setup, and modern JavaScript Web API code instead of obsolete SetStateRequest.",
+   "old_title": "Understanding Status &amp; Status Reason in Power Apps",
+   "seo_title": "Status and Status Reason in Power Apps: Complete Guide",
+   "slug": "understanding-status-status-reason-in-power-apps",
+   "status": "published",
+   "title": "How to Configure Status, Status Reason, and Transitions in Dataverse",
+   "words": 1019
+  },
   "902": {
    "at": "2026-11-18 13:19 UTC",
    "images": 18,
