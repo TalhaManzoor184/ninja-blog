@@ -330,6 +330,8 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check")
     sub.add_parser("scan")
+    rs = sub.add_parser("restore-dates")
+    rs.add_argument("--dry-run", action="store_true")
     au = sub.add_parser("audit")
     au.add_argument("--draft", action="store_true", help="move the posts it flags to draft")
     r = sub.add_parser("run")
@@ -342,6 +344,14 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_check(wp)
     if a.cmd == "scan":
         return cmd_scan(wp)
+    if a.cmd == "restore-dates":
+        from . import restore
+        text = restore.run(wp, dry_run=a.dry_run)
+        print(text)
+        if os.getenv("GITHUB_STEP_SUMMARY"):
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+                f.write(text)
+        return 0
     if a.cmd == "audit":
         from . import audit
         state = load_state()

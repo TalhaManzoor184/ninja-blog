@@ -105,9 +105,11 @@ class FakeWP(BaseHTTPRequestHandler):
             data = json.loads(body)
             p = next(p for p in self.posts if p["id"] == int(m.group(1)))
             self.updates.append((p["id"], data))
-            if "status" in data:
-                p["status"] = data["status"]
-            return self._send(200, {**p, "link": f"http://x/2024/06/08/{data.get('slug', p['slug'])}/"})
+            for k in ("status", "date", "slug"):
+                if k in data and data[k]:
+                    p[k] = data[k]
+            p["link"] = f"http://x/{p['date'][:10].replace('-', '/')}/{p['slug']}/"
+            return self._send(200, p)
         self._send(404, {})
 
     def do_DELETE(self):
@@ -318,3 +320,23 @@ def test_audit_draft_moves_flagged_and_agent_skips_them(env, tmp_path, monkeypat
     main.main(["run", "--count", "3"])
     rewritten = [pid for pid, d in FakeWP.updates if "content" in d]
     assert set(rewritten) == {1} and FakeWP.posts[1]["status"] == "draft"  # 2 duplicate and 3 near-empty stay flagged
+
+
+def test_restore_dates_puts_posts_back_on_google_urls(env, tmp_path, monkeypatch):
+    from agent import restore
+    for p in FakeWP.posts:
+        p["status"], p["date"] = "publish", "2026-11-18T09:30:00"
+    FakeWP.posts[0]["slug"] = "virtual-tables-guide-3"  # WordPress added a suffix; the real -guide-2 post still exists
+    FakeWP.posts[1]["slug"] = "virtual-tables-guide-2"
+    f = tmp_path / "orig.txt"
+    f.write_text("# header\n"
+                 "status-reason | 2024-06-09 | http://x/2024/06/09/status-reason/ | 313\n"
+                 "published-post | 2026-11-18 | http://x/2026/11/18/published-post/ | 5\n"
+                 "gone-post | 2023-01-01 | http://x/2023/01/01/gone-post/ | 9\n")
+    monkeypatch.setattr(restore, "FILE", f)
+    monkeypatch.setattr(restore, "STATE_DIR", tmp_path / "state")
+    assert main.main(["restore-dates", "--dry-run"]) == 0 and not FakeWP.updates
+    assert main.main(["restore-dates"]) == 0
+    assert FakeWP.updates == [(3, {"date": "2024-06-09T09:30:00"})]
+    rep = (tmp_path / "state/restore-urls.md").read_text()
+    assert "Moved back to the Google URL: **1**" in rep and "Already on the right URL: **1**" in rep and "gone-post" in rep
