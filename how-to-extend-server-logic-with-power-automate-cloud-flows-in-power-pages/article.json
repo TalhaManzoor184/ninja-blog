@@ -1,0 +1,225 @@
+{
+ "keep": true,
+ "seo_title": "Power Automate Cloud Flows in Power Pages Server Logic",
+ "h1": "How to Extend Server Logic with Power Automate Cloud Flows in Power Pages",
+ "meta_description": "Learn how to trigger Power Automate cloud flows securely from server logic in Power Pages using Server.Connector.CloudFlow.TriggerAsync.",
+ "focus_keyword": "Power Automate Cloud Flows in Power Pages",
+ "intro": [
+  "Extending server-side business processes in Power Pages no longer requires standalone custom integration endpoints. With the native ability to invoke Power Automate cloud flows directly from server logic, makers and developers can bridge website interactions with over 1,400 external connectors, approval engines, and downstream enterprise systems securely on the server.",
+  "This feature utilizes the `Server.Connector.CloudFlow` namespace, providing a robust server-side equivalent to client-side cloud flow APIs while executing logic within a controlled authorization context. By leveraging existing automation investments, organizations can eliminate redundant code and streamline cross-platform business workflows."
+ ],
+ "sections": [
+  {
+   "heading": "Understanding Server Logic and Cloud Flow Integration",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Server logic in Power Pages provides built-in objects under the server namespace to handle common tasks such as logging, Dataverse CRUD operations, and calling external services. The addition of cloud flow invocation allows server scripts to trigger background automations asynchronously and evaluate response envelopes instantly.",
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    },
+    {
+     "type": "diagram",
+     "text": null,
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": "flowchart TD\nPP[Power Pages Server Logic] -->|TriggerAsync| CF[Cloud Flow API]\nCF --> PA[Power Automate Cloud Flow]\nPA --> Ext[External Services & Data]",
+     "image_prompt": null,
+     "caption": "Architecture of invoking a cloud flow from Power Pages server logic"
+    },
+    {
+     "type": "paragraph",
+     "text": "When a cloud flow is triggered from server logic, the site ID, site URL, and signed-in user ID are automatically appended to the payload. This maintains full context traceability across your Power Platform environment without requiring manual header injection in every script.",
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    }
+   ]
+  },
+  {
+   "heading": "Step-by-Step Implementation of Cloud Flows in Server Logic",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "To successfully invoke a cloud flow from your server scripts, you must configure the flow, assign the appropriate web roles, and reference its unique identifier within your code.",
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    },
+    {
+     "type": "steps",
+     "text": null,
+     "items": null,
+     "steps": [
+      {
+       "title": "Create and configure your cloud flow",
+       "detail": "Build your cloud flow in Power Automate with an HTTP request trigger or appropriate Power Pages trigger schema, ensuring it accepts any required input parameters.",
+       "code": null,
+       "code_language": null
+      },
+      {
+       "title": "Add the cloud flow to your website",
+       "detail": "Navigate to the Power Pages design studio or workspace, go to Set up > Integrations, and add the cloud flow to your site. Assign the authorized web roles that are permitted to execute it.",
+       "code": null,
+       "code_language": null
+      },
+      {
+       "title": "Retrieve the flow identifier",
+       "detail": "Locate the flow identifier GUID, which matches the value used in the cloud flow API URI endpoints.",
+       "code": null,
+       "code_language": null
+      },
+      {
+       "title": "Write the server-side invocation script",
+       "detail": "Use Server.Connector.CloudFlow.TriggerAsync inside an async server logic function, passing the flow ID and a JSON string payload.",
+       "code": "async function post() {\n  let flowId = \"00000000-0000-0000-0000-000000000001\";\n  let payload = JSON.stringify({ Location: \"Seattle\" });\n  let response = await Server.Connector.CloudFlow.TriggerAsync(flowId, payload);\n  let result = JSON.parse(response);\n  if (!result.IsSuccessStatusCode) {\n    Server.Logger.Error(\"Cloud flow trigger failed: \" + result.ReasonPhrase);\n    return JSON.stringify({ success: false, error: result.ReasonPhrase });\n  }\n  return JSON.stringify({ success: true, flowResponse: result.Body });\n}",
+       "code_language": "javascript"
+      }
+     ],
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    },
+    {
+     "type": "image",
+     "text": null,
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": "Conceptual illustration showing secure digital workflows connecting a web portal environment to cloud automation services.",
+     "caption": "Secure cloud automation integration"
+    }
+   ]
+  },
+  {
+   "heading": "Handling Responses and Common Gotchas",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "When executing cloud flows from server scripts, understanding response envelopes and asynchronous behavior prevents unexpected errors. Always ensure your functions are marked as `async` and use `await` when calling `TriggerAsync`.",
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    },
+    {
+     "type": "table",
+     "text": null,
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": [
+      "Response Code",
+      "Condition",
+      "Handling Strategy"
+     ],
+     "table_rows": [
+      [
+       "200 OK",
+       "Flow executed successfully and returned a response body.",
+       "Parse the JSON string in result.Body to process downstream data."
+      ],
+      [
+       "202 Accepted",
+       "Flow completed successfully without a response action.",
+       "Treat execution as successful; the response body will be empty."
+      ],
+      [
+       "Error Status",
+       "Flow failed or authorization rules were violated.",
+       "Check Server.Logger for error details and inspect IsSuccessStatusCode."
+      ]
+     ],
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    },
+    {
+     "type": "note",
+     "text": "Remember that if you migrate your Power Pages site to another Dataverse environment, you must manually register and re-link the cloud flow in the target environment before invoking it via server logic.",
+     "items": null,
+     "steps": null,
+     "code": null,
+     "code_language": null,
+     "table_header": null,
+     "table_rows": null,
+     "mermaid": null,
+     "image_prompt": null,
+     "caption": null
+    }
+   ]
+  }
+ ],
+ "key_takeaways": [
+  "Invoke Power Automate cloud flows securely from Power Pages server logic using Server.Connector.CloudFlow.TriggerAsync.",
+  "Context parameters including site ID, site URL, and user ID are automatically appended to the trigger payload.",
+  "Flows must be explicitly added to the site via Set up > Integrations and associated with valid web roles.",
+  "Cloud flows lacking a response action return a 202 Accepted status code with an empty body."
+ ],
+ "faqs": [
+  {
+   "q": "What object is used to trigger cloud flows from Power Pages server logic?",
+   "a": "You use the Server.Connector.CloudFlow.TriggerAsync method, passing the unique flow identifier and an optional JSON payload."
+  },
+  {
+   "q": "What permissions are required to trigger a cloud flow from server logic?",
+   "a": "The cloud flow must be added to the site with an authorized web role assigned, and the signed-in user must hold one of those designated roles."
+  },
+  {
+   "q": "What happens if a cloud flow does not contain a response action?",
+   "a": "The flow returns a 202 Accepted status code along with an empty body, which is treated as a successful execution."
+  },
+  {
+   "q": "Do I need to manually pass user context to the cloud flow?",
+   "a": "No, the site ID, site URL, and signed-in user ID are automatically included in the trigger payload by the platform."
+  }
+ ],
+ "category": "Power Pages",
+ "tags": [
+  "Power Pages",
+  "Power Automate",
+  "Server Logic",
+  "Integration"
+ ],
+ "featured_image_prompt": "Abstract conceptual representation of website logic seamlessly integrating with cloud automation systems and server infrastructure.",
+ "featured_image_alt": "Power Pages server logic and cloud automation integration",
+ "internal_links_used": [],
+ "quality_notes": "Created an original, comprehensive technical guide covering the new capability to invoke cloud flows from Power Pages server logic using Server.Connector.CloudFlow.TriggerAsync. Included prerequisites, step-by-step implementation instructions, a complete code sample, a Mermaid architecture diagram, a response status table, and helpful developer gotchas."
+}

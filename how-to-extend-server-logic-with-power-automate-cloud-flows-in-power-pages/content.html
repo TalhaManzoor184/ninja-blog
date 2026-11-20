@@ -1,0 +1,181 @@
+<!-- wp:paragraph -->
+<p>Extending server-side business processes in Power Pages no longer requires standalone custom integration endpoints. With the native ability to invoke Power Automate cloud flows directly from server logic, makers and developers can bridge website interactions with over 1,400 external connectors, approval engines, and downstream enterprise systems securely on the server.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>This feature utilizes the <code>Server.Connector.CloudFlow</code> namespace, providing a robust server-side equivalent to client-side cloud flow APIs while executing logic within a controlled authorization context. By leveraging existing automation investments, organizations can eliminate redundant code and streamline cross-platform business workflows.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"anchor": "key-takeaways"} -->
+<h2 class="wp-block-heading" id="key-takeaways">Key takeaways</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Invoke Power Automate cloud flows securely from Power Pages server logic using Server.Connector.CloudFlow.TriggerAsync.</li>
+<!-- /wp:list-item --><!-- wp:list-item -->
+<li>Context parameters including site ID, site URL, and user ID are automatically appended to the trigger payload.</li>
+<!-- /wp:list-item --><!-- wp:list-item -->
+<li>Flows must be explicitly added to the site via Set up &gt; Integrations and associated with valid web roles.</li>
+<!-- /wp:list-item --><!-- wp:list-item -->
+<li>Cloud flows lacking a response action return a 202 Accepted status code with an empty body.</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"anchor": "understanding-server-logic-and-cloud-flow-integration"} -->
+<h2 class="wp-block-heading" id="understanding-server-logic-and-cloud-flow-integration">Understanding Server Logic and Cloud Flow Integration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Server logic in Power Pages provides built-in objects under the server namespace to handle common tasks such as logging, Dataverse CRUD operations, and calling external services. The addition of cloud flow invocation allows server scripts to trigger background automations asynchronously and evaluate response envelopes instantly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {"id": 0, "sizeSlug": "large", "linkDestination": "none"} -->
+<figure class="wp-block-image size-large"><img src="how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-diagram-1.png" alt="Architecture of invoking a cloud flow from Power Pages server logic" class="wp-image-0"/><figcaption class="wp-element-caption">Architecture of invoking a cloud flow from Power Pages server logic</figcaption></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>When a cloud flow is triggered from server logic, the site ID, site URL, and signed-in user ID are automatically appended to the payload. This maintains full context traceability across your Power Platform environment without requiring manual header injection in every script.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"anchor": "step-by-step-implementation-of-cloud-flows-in-server-logic"} -->
+<h2 class="wp-block-heading" id="step-by-step-implementation-of-cloud-flows-in-server-logic">Step-by-Step Implementation of Cloud Flows in Server Logic</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To successfully invoke a cloud flow from your server scripts, you must configure the flow, assign the appropriate web roles, and reference its unique identifier within your code.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">Step 1: Create and configure your cloud flow</h6>
+<!-- /wp:heading -->
+
+<!-- wp:image {"id": 0, "sizeSlug": "large", "linkDestination": "none"} -->
+<figure class="wp-block-image size-large"><img src="how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-step-4-1.jpg" alt="Step 1: Create and configure your cloud flow" class="wp-image-0"/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Build your cloud flow in Power Automate with an HTTP request trigger or appropriate Power Pages trigger schema, ensuring it accepts any required input parameters.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">Step 2: Add the cloud flow to your website</h6>
+<!-- /wp:heading -->
+
+<!-- wp:image {"id": 0, "sizeSlug": "large", "linkDestination": "none"} -->
+<figure class="wp-block-image size-large"><img src="how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-step-4-2.jpg" alt="Step 2: Add the cloud flow to your website" class="wp-image-0"/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Navigate to the Power Pages design studio or workspace, go to Set up &gt; Integrations, and add the cloud flow to your site. Assign the authorized web roles that are permitted to execute it.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">Step 3: Retrieve the flow identifier</h6>
+<!-- /wp:heading -->
+
+<!-- wp:image {"id": 0, "sizeSlug": "large", "linkDestination": "none"} -->
+<figure class="wp-block-image size-large"><img src="how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-step-4-3.jpg" alt="Step 3: Retrieve the flow identifier" class="wp-image-0"/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Locate the flow identifier GUID, which matches the value used in the cloud flow API URI endpoints.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">Step 4: Write the server-side invocation script</h6>
+<!-- /wp:heading -->
+
+<!-- wp:image {"id": 0, "sizeSlug": "large", "linkDestination": "none"} -->
+<figure class="wp-block-image size-large"><img src="how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-step-4-4.jpg" alt="Step 4: Write the server-side invocation script" class="wp-image-0"/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Use Server.Connector.CloudFlow.TriggerAsync inside an async server logic function, passing the flow ID and a JSON string payload.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>async function post() {
+  let flowId = &quot;00000000-0000-0000-0000-000000000001&quot;;
+  let payload = JSON.stringify({ Location: &quot;Seattle&quot; });
+  let response = await Server.Connector.CloudFlow.TriggerAsync(flowId, payload);
+  let result = JSON.parse(response);
+  if (!result.IsSuccessStatusCode) {
+    Server.Logger.Error(&quot;Cloud flow trigger failed: &quot; + result.ReasonPhrase);
+    return JSON.stringify({ success: false, error: result.ReasonPhrase });
+  }
+  return JSON.stringify({ success: true, flowResponse: result.Body });
+}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:image {"id": 0, "sizeSlug": "large", "linkDestination": "none"} -->
+<figure class="wp-block-image size-large"><img src="how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-illustration-5.jpg" alt="Secure cloud automation integration" class="wp-image-0"/><figcaption class="wp-element-caption">Secure cloud automation integration</figcaption></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {"anchor": "handling-responses-and-common-gotchas"} -->
+<h2 class="wp-block-heading" id="handling-responses-and-common-gotchas">Handling Responses and Common Gotchas</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When executing cloud flows from server scripts, understanding response envelopes and asynchronous behavior prevents unexpected errors. Always ensure your functions are marked as <code>async</code> and use <code>await</code> when calling <code>TriggerAsync</code>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Response Code</th><th>Condition</th><th>Handling Strategy</th></tr></thead><tbody><tr><td>200 OK</td><td>Flow executed successfully and returned a response body.</td><td>Parse the JSON string in result.Body to process downstream data.</td></tr><tr><td>202 Accepted</td><td>Flow completed successfully without a response action.</td><td>Treat execution as successful; the response body will be empty.</td></tr><tr><td>Error Status</td><td>Flow failed or authorization rules were violated.</td><td>Check Server.Logger for error details and inspect IsSuccessStatusCode.</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:paragraph -->
+<p><strong>Tip:</strong> Remember that if you migrate your Power Pages site to another Dataverse environment, you must manually register and re-link the cloud flow in the target environment before invoking it via server logic.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"anchor": "faq"} -->
+<h2 class="wp-block-heading" id="faq">Frequently asked questions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">What object is used to trigger cloud flows from Power Pages server logic?</h6>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You use the Server.Connector.CloudFlow.TriggerAsync method, passing the unique flow identifier and an optional JSON payload.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">What permissions are required to trigger a cloud flow from server logic?</h6>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The cloud flow must be added to the site with an authorized web role assigned, and the signed-in user must hold one of those designated roles.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">What happens if a cloud flow does not contain a response action?</h6>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The flow returns a 202 Accepted status code along with an empty body, which is treated as a successful execution.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level": 6} -->
+<h6 class="wp-block-heading">Do I need to manually pass user context to the cloud flow?</h6>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>No, the site ID, site URL, and signed-in user ID are automatically included in the trigger payload by the platform.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:html -->
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What object is used to trigger cloud flows from Power Pages server logic?", "acceptedAnswer": {"@type": "Answer", "text": "You use the Server.Connector.CloudFlow.TriggerAsync method, passing the unique flow identifier and an optional JSON payload."}}, {"@type": "Question", "name": "What permissions are required to trigger a cloud flow from server logic?", "acceptedAnswer": {"@type": "Answer", "text": "The cloud flow must be added to the site with an authorized web role assigned, and the signed-in user must hold one of those designated roles."}}, {"@type": "Question", "name": "What happens if a cloud flow does not contain a response action?", "acceptedAnswer": {"@type": "Answer", "text": "The flow returns a 202 Accepted status code along with an empty body, which is treated as a successful execution."}}, {"@type": "Question", "name": "Do I need to manually pass user context to the cloud flow?", "acceptedAnswer": {"@type": "Answer", "text": "No, the site ID, site URL, and signed-in user ID are automatically included in the trigger payload by the platform."}}]}</script>
+<!-- /wp:html -->
+
+<!-- wp:heading {"anchor": "references"} -->
+<h2 class="wp-block-heading" id="references">References</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><a href="https://www.microsoft.com/en-us/power-platform/blog/power-pages/extend-server-logic-with-power-automate-cloud-flows-in-power-pages/">Extend server logic with power automate cloud flows in power pages</a></li>
+<!-- /wp:list-item --><!-- wp:list-item -->
+<li><a href="https://learn.microsoft.com/power-pages/configure/server-objects">Server objects</a></li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
