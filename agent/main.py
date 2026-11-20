@@ -352,6 +352,9 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="PowerApps Ninja blog agent")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check")
+    sl = sub.add_parser("set-slug")
+    sl.add_argument("--post-id", type=int, required=True)
+    sl.add_argument("--slug", required=True)
     nw = sub.add_parser("new")
     nw.add_argument("--count", type=int)
     nw.add_argument("--dry-run", action="store_true")
@@ -373,6 +376,10 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_check(wp)
     if a.cmd == "scan":
         return cmd_scan(wp)
+    if a.cmd == "set-slug":
+        saved = wp.update_post(a.post_id, {"slug": a.slug})
+        print(f"Post {a.post_id} is now at {saved.get('link')}")
+        return 0 if saved.get("slug") == a.slug else 1
     if a.cmd == "new":
         return cmd_new(wp, a.count, a.dry_run)
     if a.cmd == "draft-thin":

@@ -87,3 +87,12 @@ def inline(text: str) -> str:
         return f'<a href="{html.escape(url)}">{m.group(1)}</a>'
 
     return re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", link, t)
+
+
+def make_slug(title: str, limit: int = 60) -> str:
+    """Readable slug: no '(step by step)' style asides, cut at a whole word."""
+    t = re.sub(r"\([^)]*\)", " ", title.lower())
+    t = re.sub(r"[^a-z0-9]+", "-", t).strip("-")
+    if len(t) <= limit:
+        return t
+    return t[:limit].rsplit("-", 1)[0]

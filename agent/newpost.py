@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 
 from . import gemini
 from .config import STATE_DIR, cfg
-from .text import html_to_text, jaccard, tokens, words
+from .text import html_to_text, jaccard, make_slug, tokens, words
 
 log = logging.getLogger(__name__)
 USED_FILE = STATE_DIR / "new_posts.json"
@@ -156,7 +156,7 @@ def run(wp, process, state: dict, *, count: int, dry_run: bool, categories: list
         log.info("Source: %s (%d words)", item["link"], words(body))
         source = (f"SOURCE: Microsoft announcement \"{item['title']}\" ({item['date']}), {item['link']}\n"
                   f"TUTORIAL PLAN: {pick.angle}\nFOCUS KEYWORD: {pick.focus_keyword}\n\n{body}")
-        slug = re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", pick.working_title.lower())).strip("-")[:80]
+        slug = make_slug(pick.working_title)
         if dry_run:
             post = {"id": 0, "slug": slug, "status": "draft", "date": None, "link": "", "title": {"raw": pick.working_title},
                     "content": {"raw": source}}

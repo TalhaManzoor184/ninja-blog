@@ -415,3 +415,11 @@ def test_new_post_source_prefers_feed_full_text_and_skips_thin_sources(monkeypat
     assert newpost.source_text({"content": long, "summary": "s", "link": "u"}) == long
     monkeypatch.setattr(newpost, "article_text", lambda url: "tiny page")
     assert newpost.words(newpost.source_text({"content": "", "summary": "short summary", "link": "u"})) < newpost.MIN_SOURCE_WORDS
+
+
+def test_make_slug():
+    from agent.text import make_slug
+    s = make_slug("How to Extend Server Logic with Power Automate Cloud Flows in Power Pages (Step by Step)")
+    assert s == "how-to-extend-server-logic-with-power-automate-cloud-flows"
+    assert not s.endswith("-") and len(s) <= 60
+    assert make_slug("Modern List in Power Pages (Step by Step)") == "modern-list-in-power-pages"
