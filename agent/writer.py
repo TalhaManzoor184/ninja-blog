@@ -54,7 +54,9 @@ def research(title: str, original: str) -> Research | None:
 
 def write(title: str, original: str, *, categories: list[str], links: list[dict], related_text: str = "",
           research_notes: Research | None = None, feedback: str = "", mode: str = "rewrite") -> Article:
-    a = cfg()["article"]
+    a = dict(cfg()["article"])
+    if mode == "new":
+        a["min_words"] = cfg()["new_posts"].get("min_words", a["min_words"])
     if mode == "new":
         parts = [
             f"WORKING TITLE: {title}",

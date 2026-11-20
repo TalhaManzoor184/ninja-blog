@@ -88,7 +88,7 @@ def plan(posts: list[dict], state: dict) -> tuple[list[dict], dict[int, list[dic
 
 # ---------------------------------------------------------------- one post -
 def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], links: list[dict],
-            dry_run: bool, state: dict, mode: str = "rewrite", source_url: str | None = None) -> str:
+            dry_run: bool, state: dict, mode: str = "rewrite", source_url: str | list[str] | None = None) -> str:
     title = post["title"]["raw"] or post.get("slug", "")
     original = html_to_text(post["content"]["raw"])
     log.info("Post %s: %r (%d words in the old draft)", post["id"], title, words(original))
@@ -112,7 +112,7 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
             mark(state, post, NOT_KEPT, notes=article.quality_notes)
             log.warning("Writer says this topic is not worth publishing: %s", article.quality_notes)
             return NOT_KEPT
-        problems = quality.check(article, cat_names, cfg()["site"]["url"])
+        problems = quality.check(article, cat_names, cfg()["site"]["url"], min_words=cfg()["new_posts"].get("min_words") if mode == "new" else None)
         if not problems:
             break
         log.warning("Quality check failed (attempt %d): %s", attempt + 1, problems)
@@ -158,7 +158,8 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
         n_img += 1
         return upload(data, f"{slug}-step-{idx}-{n}.jpg", f"Step {n}: {step.title}"[:200])
 
-    refs = (research.reference_urls if research else []) + ([source_url] if source_url else [])
+    extra = [source_url] if isinstance(source_url, str) else list(source_url or [])
+    refs = (research.reference_urls if research else []) + extra
     content = render(article, resolve, refs, step_img)
 
     featured_id = None

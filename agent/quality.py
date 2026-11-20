@@ -51,15 +51,16 @@ def repair(a: Article, categories: list[str]) -> None:
         a.category = low.get(a.category.lower(), a.category)
 
 
-def check(a: Article, categories: list[str], site_url: str) -> list[str]:
+def check(a: Article, categories: list[str], site_url: str, min_words: int | None = None) -> list[str]:
     c = cfg()["article"]
     problems: list[str] = []
     if not a.keep:
         return []  # handled by the caller
     repair(a, categories)
     n = words(article_text(a))
-    if n < c["min_words"]:
-        problems.append(f"Too short: {n} words, need at least {c['min_words']}.")
+    need = min_words or c["min_words"]
+    if n < need:
+        problems.append(f"Too short: {n} words, need at least {need}. Add depth (real steps, an example, limits), not filler.")
     if n > c["max_words"] * 1.25:
         problems.append(f"Too long: {n} words, keep it under {c['max_words']}.")
     if len(a.sections) < c["min_sections"]:

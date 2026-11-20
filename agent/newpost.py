@@ -76,12 +76,14 @@ def feed_items(days: int) -> list[dict]:
                 continue
             cats = " ".join((c_.text or "") for c_ in it.findall("category"))
             desc = html_to_text(it.findtext("description") or "")[:500]
-            full = html_to_text(it.findtext("{http://purl.org/rss/1.0/modules/content/}encoded") or "")
+            raw = it.findtext("{http://purl.org/rss/1.0/modules/content/}encoded") or ""
+            full = html_to_text(raw)
+            docs = list(dict.fromkeys(re.findall(r'href="(https://learn\.microsoft\.com/[^"#]+)', raw)))
             if not kw.search(f"{title} {cats} {desc}"):
                 continue
             seen.add(link)
             items.append({"title": title, "link": link, "date": when.date().isoformat() if when else "",
-                          "categories": cats, "summary": desc, "content": full[:20000]})
+                          "categories": cats, "summary": desc, "content": full[:20000], "docs": docs})
     return items
 
 
@@ -100,11 +102,17 @@ def article_text(url: str) -> str:
 
 
 def source_text(item: dict) -> str:
-    """Full announcement text: the feed's content:encoded, else the page itself."""
+    """Full announcement text (feed content:encoded, else the page) plus up to 2 linked Microsoft Learn pages."""
     a, b = item.get("content") or "", ""
     if words(a) < MIN_SOURCE_WORDS:
         b = article_text(item["link"])
-    return max([a, b, item.get("summary", "")], key=words)
+    text = max([a, b, item.get("summary", "")], key=words)
+    for url in (item.get("docs") or [])[:2]:
+        doc = article_text(url)[:9000]
+        if words(doc) > 80:
+            text += f"\n\n--- MICROSOFT LEARN DOCUMENTATION: {url} ---\n{doc}"
+            item.setdefault("refs", []).append(url)
+    return text
 
 
 def choose(items: list[dict], existing_titles: list[str]) -> tuple[dict, Pick] | None:
@@ -157,7 +165,7 @@ def run(wp, process, state: dict, *, count: int, dry_run: bool, categories: list
             post["content"] = {"raw": source}
             post["title"] = {"raw": pick.working_title}
         result = process(wp, post, related=[], categories=categories, links=links_for(posts, post["id"]),
-                         dry_run=dry_run, state=state, mode="new", source_url=item["link"])
+                         dry_run=dry_run, state=state, mode="new", source_url=[item["link"], *item.get("refs", [])])
         if not dry_run:
             used["used"][item["link"]] = {"post_id": post["id"], "title": pick.working_title, "result": result,
                                           "at": dt.date.today().isoformat()}
