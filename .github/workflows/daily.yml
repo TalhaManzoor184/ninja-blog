@@ -12,6 +12,9 @@ on:
       count:
         description: "How many posts this run (blank = POSTS_PER_DAY or config.yaml)"
         required: false
+      new_count:
+        description: "New posts on current topics this run (blank = NEW_POSTS_PER_DAY or config.yaml; 0 = none)"
+        required: false
       dry_run:
         description: "Preview only: write the article as a downloadable artifact, change nothing in WordPress"
         type: boolean
@@ -53,6 +56,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Write today's post
+        if: ${{ inputs.count != '0' }}
         env:
           WP_URL: ${{ secrets.WP_URL }}
           WP_USER: ${{ secrets.WP_USER }}
@@ -71,6 +75,22 @@ jobs:
           [ -n "${{ inputs.post_id }}" ] && args="$args --post-id ${{ inputs.post_id }}"
           [ "${{ inputs.dry_run }}" = "true" ] && args="$args --dry-run"
           python -m agent.main $args
+
+      - name: Write a new post on a current topic
+        if: ${{ !cancelled() && !inputs.post_id }}
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TEXT_MODEL: ${{ vars.GEMINI_TEXT_MODEL }}
+          GEMINI_IMAGE_MODEL: ${{ vars.GEMINI_IMAGE_MODEL }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_IMAGE_MODEL: ${{ vars.CF_IMAGE_MODEL }}
+          NEW_POSTS_PER_DAY: ${{ inputs.new_count || vars.NEW_POSTS_PER_DAY }}
+          PUBLISH: ${{ github.event_name == 'workflow_dispatch' && (inputs.publish && 'true' || 'false') || vars.PUBLISH }}
+        run: python -m agent.main new ${{ inputs.dry_run && '--dry-run' || '' }}
 
       - name: Upload preview
         if: always()

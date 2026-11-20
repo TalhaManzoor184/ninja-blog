@@ -53,12 +53,24 @@ def research(title: str, original: str) -> Research | None:
 
 
 def write(title: str, original: str, *, categories: list[str], links: list[dict], related_text: str = "",
-          research_notes: Research | None = None, feedback: str = "") -> Article:
+          research_notes: Research | None = None, feedback: str = "", mode: str = "rewrite") -> Article:
     a = cfg()["article"]
-    parts = [
-        f"ORIGINAL TITLE: {title}",
-        f"ORIGINAL POST:\n{original[:20000]}",
-    ]
+    if mode == "new":
+        parts = [
+            f"WORKING TITLE: {title}",
+            "This is a NEW post. The source below is a Microsoft announcement: use it only for facts. Do not copy its "
+            "sentences or structure. Write an original, practical tutorial for makers and developers: what the feature is "
+            "and when to use it, prerequisites (licence, environment, preview or generally available status as of the "
+            "source date), step-by-step setup, one realistic example scenario worked end to end, limits and gotchas, and "
+            "how it fits with existing Power Platform / Dynamics 365 work. Only state facts the source supports or you are "
+            "certain of. Set keep=false only if the source gives too little to write a real tutorial.",
+            f"SOURCE MATERIAL:\n{original[:20000]}",
+        ]
+    else:
+        parts = [
+            f"ORIGINAL TITLE: {title}",
+            f"ORIGINAL POST:\n{original[:20000]}",
+        ]
     if related_text:
         parts.append(f"OTHER DRAFTS ON THE SAME TOPIC (duplicates; merge anything useful from them):\n{related_text[:12000]}")
     if research_notes:

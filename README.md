@@ -18,6 +18,12 @@ Roz subah GitHub Actions par chalta hai. Har run mein thepowerappsninja.com ka a
 
 Har run ka khulasa Actions run ke **Summary** mein aur `state/report.md` mein hota hai.
 
+## Nayi posts (current topics)
+
+Har run mein agent ek **nayi post** bhi likhta hai. Woh Microsoft ke apne blogs ke RSS feeds dekhta hai: Power Automate, Power Pages, Dynamics 365 aur Power Platform. Pichhle 120 din ke announcements mein se ek topic chunta hai jis par blog mein abhi koi post nahi hai, aur us par apna step-by-step tutorial likhta hai: feature kya hai, prerequisites, setup ke steps, ek misaal aur limits. Announcement ka text copy nahi hota; uska link post ke References mein jata hai. Ek announcement par sirf ek dafa post banti hai (`state/new_posts.json`).
+
+Roz kitni nayi posts banein, yeh repo variable `NEW_POSTS_PER_DAY` se tay hota hai (default 1, `0` = band).
+
 ## Setup (sirf ek dafa)
 
 ### 1. WordPress Application Password

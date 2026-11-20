@@ -35,6 +35,8 @@ def cfg() -> dict:
         r["publish"] = _bool(os.environ["PUBLISH"])
     if os.getenv("USE_SEARCH", "").strip():
         r["use_search"] = _bool(os.environ["USE_SEARCH"])
+    if os.getenv("NEW_POSTS_PER_DAY", "").strip():
+        data["new_posts"]["per_day"] = int(os.environ["NEW_POSTS_PER_DAY"])
     if os.getenv("DUPLICATE_ACTION", "").strip():
         data["duplicates"]["action"] = os.environ["DUPLICATE_ACTION"].strip().lower()
     return data

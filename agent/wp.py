@@ -83,6 +83,9 @@ class WP:
     def update_post(self, post_id: int, data: dict) -> dict:
         return self._req("POST", f"/posts/{post_id}", json=data).json()
 
+    def create_post(self, data: dict) -> dict:
+        return self._req("POST", "/posts", json=data).json()
+
     def trash_post(self, post_id: int) -> dict:
         return self._req("DELETE", f"/posts/{post_id}").json()
 

@@ -100,6 +100,14 @@ class FakeWP(BaseHTTPRequestHandler):
             t = {"id": 200 + len(self.tags), "name": json.loads(body)["name"]}
             self.tags.append(t)
             return self._send(201, t)
+        if path.endswith("/posts"):
+            data = json.loads(body)
+            p = {"id": 900 + len(self.posts), "slug": data["slug"], "status": data["status"], "date": "2026-11-21T10:00:00",
+                 "title": {"raw": data["title"]}, "content": {"raw": data.get("content", "")}, "categories": [], "tags": []}
+            p["link"] = f"http://x/2026/11/21/{p['slug']}/"
+            self.posts.append(p)
+            self.updates.append(("create", data))
+            return self._send(201, p)
         m = re.search(r"/posts/(\d+)$", path)
         if m:
             data = json.loads(body)
@@ -361,3 +369,41 @@ def test_draft_thin_moves_short_unrewritten_posts_and_agent_republishes_them(env
     main.main(["run"])
     pid, data = FakeWP.updates[-1]
     assert pid == 3 and data["status"] == "publish" and data["date"] == "2024-06-08T10:00:00"
+
+
+def test_new_post_from_microsoft_feed(env, tmp_path, monkeypatch):
+    from agent import newpost
+    from agent.newpost import Pick
+    monkeypatch.setattr(newpost, "USED_FILE", tmp_path / "state/new_posts.json")
+    monkeypatch.setattr(newpost, "STATE_DIR", tmp_path / "state")
+    items = [{"title": "Announcing GA of Server Logic in Power Pages", "link": "https://www.microsoft.com/en-us/power-platform/blog/server-logic/",
+              "date": "2026-11-10", "categories": "Power Pages", "summary": "Server logic is now GA."},
+             {"title": "Customer story: Contoso", "link": "https://www.microsoft.com/x/contoso/", "date": "2026-11-09",
+              "categories": "Power Apps", "summary": "story"}]
+    monkeypatch.setattr(newpost, "feed_items", lambda days: list(items))
+    monkeypatch.setattr(newpost, "article_text", lambda url: "Server logic lets you run JavaScript on the server in Power Pages. " * 20)
+    seen = {}
+    real = gemini.structured
+
+    def fake(prompt, schema, **k):
+        if schema is Pick:
+            seen["pick_prompt"] = prompt
+            return Pick(index=0, working_title="How to Use Server Logic in Power Pages (Step by Step)",
+                        focus_keyword="power pages server logic", angle="Validate a form on the server")
+        seen["write_prompt"] = prompt
+        return real(prompt, schema, **k)
+    monkeypatch.setattr(gemini, "structured", fake)
+    assert main.main(["new", "--count", "1"]) == 0
+    assert "Dirty fields in JavaScript" in seen["pick_prompt"]  # existing titles are given to avoid repeats
+    assert "This is a NEW post" in seen["write_prompt"] and "do not copy" in seen["write_prompt"].lower()
+    created = [d for k, d in FakeWP.updates if k == "create"][0]
+    assert created["status"] == "draft"
+    pid, data = FakeWP.updates[-1]
+    assert data["status"] == "publish" and "date" not in data
+    assert "https://www.microsoft.com/en-us/power-platform/blog/server-logic/" in data["content"]  # source in References
+    used = json.loads((tmp_path / "state/new_posts.json").read_text())
+    assert items[0]["link"] in used["used"]
+    # the same announcement is never used twice
+    main.main(["new", "--count", "1"])
+    assert len([1 for k, _ in FakeWP.updates if k == "create"]) == 2 or "Contoso" in seen["pick_prompt"]
+    assert "Server Logic in Power Pages" not in seen["pick_prompt"].split("EXISTING POST TITLES")[0]

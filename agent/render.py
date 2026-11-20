@@ -132,8 +132,11 @@ def render(article: Article, resolve: MediaResolver, references: list[str] | Non
             parts.append(h(f.q, SUB))
             parts.append(p(f.a))
         parts.append(raw_html(faq_schema(article)))
-    refs = [u for u in (references or []) if re.match(r"^https://learn\.microsoft\.com/", u)]
+    refs = [u for u in dict.fromkeys(references or []) if re.match(r"^https://(learn\.microsoft\.com|www\.microsoft\.com)/", u)]
     if refs:
         parts.append(h("References", 2, "references"))
-        parts.append(ul([f"[{u.split('learn.microsoft.com/')[-1].strip('/').split('/')[-1].replace('-', ' ') or 'Microsoft Learn'}]({u})" for u in refs[:6]]))
+        def label(u):
+            last = u.rstrip("/").split("/")[-1].replace("-", " ")
+            return (last[:1].upper() + last[1:]) if last else "Microsoft"
+        parts.append(ul([f"[{label(u)}]({u})" for u in refs[:6]]))
     return "\n\n".join(parts)

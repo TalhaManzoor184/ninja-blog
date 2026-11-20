@@ -88,12 +88,12 @@ def plan(posts: list[dict], state: dict) -> tuple[list[dict], dict[int, list[dic
 
 # ---------------------------------------------------------------- one post -
 def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], links: list[dict],
-            dry_run: bool, state: dict) -> str:
+            dry_run: bool, state: dict, mode: str = "rewrite", source_url: str | None = None) -> str:
     title = post["title"]["raw"] or post.get("slug", "")
     original = html_to_text(post["content"]["raw"])
     log.info("Post %s: %r (%d words in the old draft)", post["id"], title, words(original))
 
-    if not dry_run:
+    if not dry_run and mode == "rewrite":
         BACKUP_DIR.mkdir(parents=True, exist_ok=True)
         bk = BACKUP_DIR / f"{post['id']}.json"
         if not bk.exists():  # keep the very first original
@@ -103,11 +103,11 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
 
     related_text = "\n\n---\n\n".join(f"# {r['title']['raw']}\n{html_to_text(r['content']['raw'])}" for r in related)
     cat_names = [c["name"] for c in categories]
-    research = writer.research(title, original)
+    research = writer.research(title, original) if mode == "rewrite" else None
     article, problems = None, []
     for attempt in range(2):
         article = writer.write(title, original, categories=cat_names, links=links, related_text=related_text,
-                               research_notes=research, feedback="\n".join(f"- {x}" for x in problems))
+                               research_notes=research, feedback="\n".join(f"- {x}" for x in problems), mode=mode)
         if not article.keep:
             mark(state, post, NOT_KEPT, notes=article.quality_notes)
             log.warning("Writer says this topic is not worth publishing: %s", article.quality_notes)
@@ -158,7 +158,7 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
         n_img += 1
         return upload(data, f"{slug}-step-{idx}-{n}.jpg", f"Step {n}: {step.title}"[:200])
 
-    refs = research.reference_urls if research else []
+    refs = (research.reference_urls if research else []) + ([source_url] if source_url else [])
     content = render(article, resolve, refs, step_img)
 
     featured_id = None
@@ -176,7 +176,7 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
         "content": content,
         "excerpt": article.meta_description,
         "slug": slug,  # keep the old URL
-        "date": post.get("date"),  # permalinks contain the date: keep it so Google's URLs still work
+        "date": post.get("date") if mode == "rewrite" else None,  # rewrite: keep the date so Google's URLs still work
         "meta": {
             "_yoast_wpseo_title": article.seo_title, "_yoast_wpseo_metadesc": article.meta_description,
             "_yoast_wpseo_focuskw": article.focus_keyword,
@@ -184,6 +184,8 @@ def process(wp: WP, post: dict, *, related: list[dict], categories: list[dict], 
             "rank_math_focus_keyword": article.focus_keyword,
         },
     }
+    if not data["date"]:
+        del data["date"]
     if cat:
         data["categories"] = [cat]
     if featured_id:
@@ -324,11 +326,34 @@ def cmd_run(wp: WP, post_id: int | None, dry_run: bool, count: int | None) -> in
     return 0 if done or not queue else 1
 
 
+def cmd_new(wp: WP, count: int | None, dry_run: bool) -> int:
+    from . import newpost
+    state = load_state()
+    want = count if count is not None else cfg()["new_posts"]["per_day"]
+    if want <= 0:
+        return 0
+
+    def proc(wp_, post, **kw):
+        result = process(wp_, post, **kw)
+        if result not in (DONE, "dry_run") and not dry_run and post.get("id"):
+            wp_.trash_post(post["id"])  # a new post that did not pass leaves no empty draft behind
+        return result
+
+    made = newpost.run(wp, proc, state, count=want, dry_run=dry_run, categories=wp.categories(), links_for=site_links)
+    if not dry_run:
+        save_state(state)
+    print(f"New posts: {made} {'previewed' if dry_run else 'published'}.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     ap = argparse.ArgumentParser(description="PowerApps Ninja blog agent")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check")
+    nw = sub.add_parser("new")
+    nw.add_argument("--count", type=int)
+    nw.add_argument("--dry-run", action="store_true")
     sub.add_parser("scan")
     th = sub.add_parser("draft-thin")
     th.add_argument("--max-words", type=int, default=500)
@@ -347,6 +372,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_check(wp)
     if a.cmd == "scan":
         return cmd_scan(wp)
+    if a.cmd == "new":
+        return cmd_new(wp, a.count, a.dry_run)
     if a.cmd == "draft-thin":
         from . import thin
         text = thin.run(wp, a.max_words, a.dry_run)

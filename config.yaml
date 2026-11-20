@@ -49,3 +49,14 @@ article:
 duplicates:
   similarity: 0.85          # 0-1; same title, or text this similar, counts as the same topic
   action: "skip"            # skip = leave the copy as a draft and list it in the report; trash = move it to WordPress trash
+
+new_posts:
+  per_day: 1                # new posts a day on current topics (override with the NEW_POSTS_PER_DAY variable); 0 = off
+  days: 120                 # only announcements from the last N days
+  topics: ["Dynamics 365 CRM (Sales, Customer Service, model-driven apps, Dataverse)", "Power Automate", "Power Pages"]
+  keywords: ["power automate", "power pages", "dynamics 365", "dataverse", "model-driven", "customer service", "\\bsales\\b", "field service", "\\bcrm\\b", "cloud flow", "desktop flow"]
+  feeds:
+    - "https://www.microsoft.com/en-us/power-platform/blog/power-automate/feed/"
+    - "https://www.microsoft.com/en-us/power-platform/blog/power-pages/feed/"
+    - "https://www.microsoft.com/en-us/dynamics-365/blog/feed/"
+    - "https://www.microsoft.com/en-us/power-platform/blog/feed/"
