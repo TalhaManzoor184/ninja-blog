@@ -77,10 +77,38 @@
    "title": "Create a Virtual Table in Power Apps Using OData v4 Data Provider",
    "words": 1057
   },
+  "941": {
+   "at": "2026-11-20 13:30 UTC",
+   "notes": "Too short: 798 words, need at least 900.",
+   "old_title": "HOW TO FORCE SYNC AN USER IN DYNAMICS 365 USING POWERSHELL SCRIPT?",
+   "slug": "how-to-force-sync-an-user-in-dynamics-365-using-powershell-script",
+   "status": "needs_review",
+   "title": "HOW TO FORCE SYNC AN USER IN DYNAMICS 365 USING POWERSHELL SCRIPT?"
+  },
+  "945": {
+   "at": "2026-11-20 13:32 UTC",
+   "notes": "Too short: 843 words, need at least 900.",
+   "old_title": "APPROVE THE DEPLOYMENT OF SOLUTIONS USING PIPELINES IN THE POWER PLATFORM",
+   "slug": "approve-the-deployment-of-solutions-using-pipelines-in-the-power-platform",
+   "status": "needs_review",
+   "title": "APPROVE THE DEPLOYMENT OF SOLUTIONS USING PIPELINES IN THE POWER PLATFORM"
+  },
   "967": {
    "notes": "Duplicate of #969 \"DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS\" (keep that one)",
    "status": "flagged",
    "title": "DATAVERSE: HOW THE RELATEDENTITIES PLUGIN WORKS"
+  },
+  "998": {
+   "at": "2026-11-20 13:35 UTC",
+   "images": 7,
+   "link": "https://thepowerappsninja.com/2024/04/01/power-automate-all-the-http-connectors-and-what-they-do/",
+   "notes": "Expanded the draft into a comprehensive technical tutorial meeting the 900+ word requirement. Added step-by-step instructions, a comparison table, a Mermaid architecture diagram, and structured FAQs while strictly maintaining the original technical intent.",
+   "old_title": "POWER AUTOMATE - ALL THE HTTP CONNECTORS AND WHAT THEY DO",
+   "seo_title": "Power Automate HTTP Connectors Guide: Types and Use Cases",
+   "slug": "power-automate-all-the-http-connectors-and-what-they-do",
+   "status": "published",
+   "title": "Power Automate HTTP Connectors: Complete Guide to Every Connector and What They Do",
+   "words": 1152
   }
  }
 }
