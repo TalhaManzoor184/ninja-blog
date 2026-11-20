@@ -1,0 +1,44 @@
+name: Draft thin posts
+
+# Moves published posts under N words that the agent has not rewritten yet to draft.
+# The daily agent then rewrites them (Google-known posts first) and publishes them again on the same URL.
+on:
+  workflow_dispatch:
+    inputs:
+      max_words:
+        description: "Posts with fewer words than this go to draft"
+        default: "500"
+      dry_run:
+        description: "Only list them, change nothing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  thin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Draft thin posts
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: python -m agent.main draft-thin --max-words "${{ inputs.max_words }}" ${{ inputs.dry_run && '--dry-run' || '' }}
+      - name: Save list
+        run: |
+          git config user.name "ninja-blog-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/thin-drafted.md
+          git diff --cached --quiet && exit 0
+          git commit -m "Thin posts drafted $(date -u +%F)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1

@@ -340,3 +340,24 @@ def test_restore_dates_puts_posts_back_on_google_urls(env, tmp_path, monkeypatch
     assert FakeWP.updates == [(3, {"date": "2024-06-09T09:30:00"})]
     rep = (tmp_path / "state/restore-urls.md").read_text()
     assert "Moved back to the Google URL: **1**" in rep and "Already on the right URL: **1**" in rep and "gone-post" in rep
+
+
+def test_draft_thin_moves_short_unrewritten_posts_and_agent_republishes_them(env, tmp_path, monkeypatch):
+    from agent import restore, thin
+    for p in FakeWP.posts:
+        p["status"] = "publish"
+    FakeWP.posts[2]["content"]["raw"] = "<p>" + "short words here " * 30 + "</p>"  # post 3: 90 words
+    st = tmp_path / "state/progress.json"
+    st.parent.mkdir(parents=True)
+    st.write_text(json.dumps({"posts": {"4": {"status": "published"}}}))  # already rewritten: never touched
+    f = tmp_path / "o.txt"
+    f.write_text("status-reason | 2024-06-08 | http://x/2024/06/08/status-reason/ | 313\n")
+    monkeypatch.setattr(restore, "FILE", f)
+    monkeypatch.setattr(thin, "STATE_DIR", tmp_path / "state")
+    main.main(["draft-thin", "--max-words", "100"])
+    drafted = [pid for pid, d in FakeWP.updates if d == {"status": "draft"}]
+    assert drafted == [3]  # 1 and 2 are long, 4 was rewritten
+    assert "| 3 | 90 | 313 |" in (tmp_path / "state/thin-drafted.md").read_text()
+    main.main(["run"])
+    pid, data = FakeWP.updates[-1]
+    assert pid == 3 and data["status"] == "publish" and data["date"] == "2024-06-08T10:00:00"
