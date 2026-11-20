@@ -223,14 +223,14 @@ def write_report(state: dict, queue: list[dict], dups: list[tuple[dict, dict]], 
               f"- Duplicates set aside: **{len(dups)}**", f"- Need your review: **{len(by(REVIEW))}**",
               f"- Not worth publishing (left as draft): **{len(by(NOT_KEPT))}**", ""]
     if by(REVIEW):
-        lines += ["## Need your review", ""] + [f"- #{k} {v['title']} — {v.get('notes', '')}" for k, v in by(REVIEW)] + [""]
+        lines += ["## Need your review", ""] + [f"- #{k} {v.get('title', '')} — {v.get('notes', '')}" for k, v in by(REVIEW)] + [""]
     if dups:
         lines += ["## Duplicates (copy → kept post)", ""] + [f"- #{d['id']} {d['title']['raw']} → #{k['id']} {k['title']['raw']}" for d, k in dups] + [""]
     if by(NOT_KEPT):
-        lines += ["## Not worth publishing", ""] + [f"- #{k} {v['title']} — {v.get('notes', '')}" for k, v in by(NOT_KEPT)] + [""]
+        lines += ["## Not worth publishing", ""] + [f"- #{k} {v.get('title', '')} — {v.get('notes', '')}" for k, v in by(NOT_KEPT)] + [""]
     lines += ["## Next in queue", ""] + [f"{i}. #{p['id']} {p['title']['raw']} (`{p.get('slug')}`)" for i, p in enumerate(queue[:15], 1)] + [""]
     if by(DONE):
-        lines += ["## Published", ""] + [f"- {v['at'][:10]} [{v['title']}]({v.get('link', '')}) — {v.get('words', '?')} words" for _, v in sorted(by(DONE), key=lambda x: x[1]["at"], reverse=True)]
+        lines += ["## Published", ""] + [f"- {v.get('at', '')[:10]} [{v.get('title', '')}]({v.get('link', '')}) — {v.get('words', '?')} words" for _, v in sorted(by(DONE), key=lambda x: x[1].get("at", ""), reverse=True)]
     text = "\n".join(lines) + "\n"
     REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
     REPORT_FILE.write_text(text, encoding="utf-8")
