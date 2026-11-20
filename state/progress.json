@@ -26,6 +26,18 @@
    "status": "duplicate",
    "title": "How to use Autonumber field in Model Driven Apps"
   },
+  "3936": {
+   "at": "2026-11-20 19:40 UTC",
+   "images": 6,
+   "link": "https://thepowerappsninja.com/2026/11/20/how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-step-b/",
+   "notes": "Expanded word count and structural depth by adding detailed explanations of response handling, status codes (200 vs 202), security requirements, architecture diagram, and concrete JavaScript implementation steps.",
+   "old_title": "How to Extend Server Logic with Power Automate Cloud Flows in Power Pages (Step by Step)",
+   "seo_title": "Extend Server Logic with Power Automate in Power Pages",
+   "slug": "how-to-extend-server-logic-with-power-automate-cloud-flows-in-power-pages-step-b",
+   "status": "published",
+   "title": "How to Extend Server Logic with Power Automate Cloud Flows in Power Pages",
+   "words": 819
+  },
   "510": {
    "notes": "Dated feedback site link with no lasting technical how-to value.",
    "status": "flagged",
