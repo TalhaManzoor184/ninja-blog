@@ -381,7 +381,7 @@ def test_new_post_from_microsoft_feed(env, tmp_path, monkeypatch):
              {"title": "Customer story: Contoso", "link": "https://www.microsoft.com/x/contoso/", "date": "2026-11-09",
               "categories": "Power Apps", "summary": "story"}]
     monkeypatch.setattr(newpost, "feed_items", lambda days: list(items))
-    monkeypatch.setattr(newpost, "article_text", lambda url: "Server logic lets you run JavaScript on the server in Power Pages. " * 20)
+    monkeypatch.setattr(newpost, "article_text", lambda url: "Server logic lets you run JavaScript on the server in Power Pages. " * 30)
     seen = {}
     real = gemini.structured
 
@@ -407,3 +407,11 @@ def test_new_post_from_microsoft_feed(env, tmp_path, monkeypatch):
     main.main(["new", "--count", "1"])
     assert len([1 for k, _ in FakeWP.updates if k == "create"]) == 2 or "Contoso" in seen["pick_prompt"]
     assert "Server Logic in Power Pages" not in seen["pick_prompt"].split("EXISTING POST TITLES")[0]
+
+
+def test_new_post_source_prefers_feed_full_text_and_skips_thin_sources(monkeypatch):
+    from agent import newpost
+    long = "Server logic runs JavaScript on the Power Pages server. " * 40
+    assert newpost.source_text({"content": long, "summary": "s", "link": "u"}) == long
+    monkeypatch.setattr(newpost, "article_text", lambda url: "tiny page")
+    assert newpost.words(newpost.source_text({"content": "", "summary": "short summary", "link": "u"})) < newpost.MIN_SOURCE_WORDS

@@ -17,10 +17,11 @@ from pydantic import BaseModel, Field
 
 from . import gemini
 from .config import STATE_DIR, cfg
-from .text import html_to_text, jaccard, tokens
+from .text import html_to_text, jaccard, tokens, words
 
 log = logging.getLogger(__name__)
 USED_FILE = STATE_DIR / "new_posts.json"
+MIN_SOURCE_WORDS = 250  # less than this and the writer would have to guess: pick another topic
 UA = {"User-Agent": "Mozilla/5.0 (compatible; PowerAppsNinja-BlogAgent/1.0)"}
 
 
@@ -75,11 +76,12 @@ def feed_items(days: int) -> list[dict]:
                 continue
             cats = " ".join((c_.text or "") for c_ in it.findall("category"))
             desc = html_to_text(it.findtext("description") or "")[:500]
+            full = html_to_text(it.findtext("{http://purl.org/rss/1.0/modules/content/}encoded") or "")
             if not kw.search(f"{title} {cats} {desc}"):
                 continue
             seen.add(link)
             items.append({"title": title, "link": link, "date": when.date().isoformat() if when else "",
-                          "categories": cats, "summary": desc})
+                          "categories": cats, "summary": desc, "content": full[:20000]})
     return items
 
 
@@ -91,8 +93,18 @@ def article_text(url: str) -> str:
         log.warning("Could not fetch %s: %s", url, e)
         return ""
     html = r.text
-    m = re.search(r"<article\b.*?</article>", html, re.S | re.I) or re.search(r"<main\b.*?</main>", html, re.S | re.I)
-    return html_to_text(m.group(0) if m else html)[:15000]
+    # the longest of the page's <article>/<main> blocks, else the whole page
+    blocks = re.findall(r"<article\b.*?</article>", html, re.S | re.I) + re.findall(r"<main\b.*?</main>", html, re.S | re.I)
+    texts = [html_to_text(b) for b in blocks] or [html_to_text(html)]
+    return max(texts, key=len)[:20000]
+
+
+def source_text(item: dict) -> str:
+    """Full announcement text: the feed's content:encoded, else the page itself."""
+    a, b = item.get("content") or "", ""
+    if words(a) < MIN_SOURCE_WORDS:
+        b = article_text(item["link"])
+    return max([a, b, item.get("summary", "")], key=words)
 
 
 def choose(items: list[dict], existing_titles: list[str]) -> tuple[dict, Pick] | None:
@@ -126,7 +138,14 @@ def run(wp, process, state: dict, *, count: int, dry_run: bool, categories: list
             break
         item, pick = got
         items.remove(item)
-        body = article_text(item["link"]) or item["summary"]
+        body = source_text(item)
+        if words(body) < MIN_SOURCE_WORDS:
+            log.warning("Skipping %r: only %d words of source text", item["title"], words(body))
+            used["used"][item["link"]] = {"skipped": f"source too short ({words(body)} words)", "at": dt.date.today().isoformat()}
+            if not dry_run:
+                _save_used(used)
+            continue
+        log.info("Source: %s (%d words)", item["link"], words(body))
         source = (f"SOURCE: Microsoft announcement \"{item['title']}\" ({item['date']}), {item['link']}\n"
                   f"TUTORIAL PLAN: {pick.angle}\nFOCUS KEYWORD: {pick.focus_keyword}\n\n{body}")
         slug = re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", pick.working_title.lower())).strip("-")[:80]
