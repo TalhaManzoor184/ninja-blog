@@ -1,4 +1,4 @@
-# Thin posts moved to draft (dry run)
+# Thin posts moved to draft
 
 **99** published posts under 500 words. The agent rewrites them, posts with Google impressions first, and publishes each again on its old URL.
 
