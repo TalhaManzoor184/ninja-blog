@@ -5,6 +5,18 @@
    "post_id": 3936,
    "result": "published",
    "title": "How to Extend Server Logic with Power Automate Cloud Flows in Power Pages (Step by Step)"
+  },
+  "https://www.microsoft.com/en-us/power-platform/blog/power-pages/modern-list-in-power-pages-is-now-generally-available/": {
+   "at": "2026-11-21",
+   "post_id": 3944,
+   "result": "needs_review",
+   "title": "How to Use Modern Lists in Power Pages (Step by Step)"
+  },
+  "https://www.microsoft.com/en-us/power-platform/blog/power-pages/new-authentication-governance-controls-in-power-pages/": {
+   "at": "2026-11-21",
+   "post_id": 3946,
+   "result": "published",
+   "title": "How to Configure Authentication Governance Controls in Power Pages"
   }
  }
 }

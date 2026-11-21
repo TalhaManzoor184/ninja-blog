@@ -38,6 +38,26 @@
    "title": "How to Extend Server Logic with Power Automate Cloud Flows in Power Pages",
    "words": 819
   },
+  "3944": {
+   "at": "2026-11-21 13:11 UTC",
+   "notes": "Too short: 556 words, need at least 650. Add depth (real steps, an example, limits), not filler.",
+   "old_title": "How to Use Modern Lists in Power Pages (Step by Step)",
+   "slug": "how-to-use-modern-lists-in-power-pages",
+   "status": "needs_review",
+   "title": "How to Use Modern Lists in Power Pages (Step by Step)"
+  },
+  "3946": {
+   "at": "2026-11-21 13:13 UTC",
+   "images": 8,
+   "link": "https://thepowerappsninja.com/2026/11/21/how-to-configure-authentication-governance-controls-in/",
+   "notes": "Expanded the original announcement details into a robust, comprehensive tutorial adding structural depth, hierarchy explanation, explicit setup steps, and operational gotchas to meet word-count and quality guidelines.",
+   "old_title": "How to Configure Authentication Governance Controls in Power Pages",
+   "seo_title": "Authentication Governance Controls Power Pages Guide",
+   "slug": "how-to-configure-authentication-governance-controls-in",
+   "status": "published",
+   "title": "How to Configure Authentication Governance Controls in Power Pages",
+   "words": 909
+  },
   "510": {
    "notes": "Dated feedback site link with no lasting technical how-to value.",
    "status": "flagged",
