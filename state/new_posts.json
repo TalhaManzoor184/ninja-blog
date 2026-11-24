@@ -1,5 +1,11 @@
 {
  "used": {
+  "https://www.microsoft.com/en-us/power-platform/blog/power-pages/discover-and-review-power-pages-sites-with-power-platform-inventory-public-preview/": {
+   "at": "2026-11-24",
+   "post_id": 3957,
+   "result": "needs_review",
+   "title": "How to Discover and Review Power Pages Sites with Power Platform Inventory"
+  },
   "https://www.microsoft.com/en-us/power-platform/blog/power-pages/extend-server-logic-with-power-automate-cloud-flows-in-power-pages/": {
    "at": "2026-11-20",
    "post_id": 3936,

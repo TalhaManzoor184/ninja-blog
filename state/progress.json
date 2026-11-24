@@ -58,6 +58,14 @@
    "title": "How to Configure Authentication Governance Controls in Power Pages",
    "words": 909
   },
+  "3957": {
+   "at": "2026-11-24 11:25 UTC",
+   "notes": "Too short: 610 words, need at least 650. Add depth (real steps, an example, limits), not filler.",
+   "old_title": "How to Discover and Review Power Pages Sites with Power Platform Inventory",
+   "slug": "how-to-discover-and-review-power-pages-sites-with-power",
+   "status": "needs_review",
+   "title": "How to Discover and Review Power Pages Sites with Power Platform Inventory"
+  },
   "510": {
    "notes": "Dated feedback site link with no lasting technical how-to value.",
    "status": "flagged",
